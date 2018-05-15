@@ -1,22 +1,12 @@
 package com.example.tszchiung.app
 
-import android.app.ActionBar
-import android.content.res.Configuration
-import android.graphics.Color
 import android.os.Bundle
 import android.support.design.widget.NavigationView
+import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
-import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.Gravity
 import android.widget.ImageButton
-import android.widget.RelativeLayout
-import android.widget.TextView
-import java.lang.reflect.AccessibleObject.setAccessible
 
 class HomeActivity : AppCompatActivity() {
 
@@ -42,7 +32,11 @@ class HomeActivity : AppCompatActivity() {
         mDrawerToggle.setOnClickListener { mDrawerLayout.openDrawer(GravityCompat.START) }
         navigationView.setNavigationItemSelectedListener { menuItem ->
             // set item as selected to persist highlight
-            menuItem.isChecked = true
+//            menuItem.isChecked = true
+            when (menuItem.itemId) {
+                R.id.home -> startReplaceTransaction(HomeFragment.newInstance(false))
+                R.id.profile -> startReplaceTransaction(ProfileFragment.newInstance("Peter", "wahaha"))
+            }
             // close drawer when item is tapped
             mDrawerLayout.closeDrawers()
 
@@ -51,10 +45,17 @@ class HomeActivity : AppCompatActivity() {
 
             true
         }
+
+        startReplaceTransaction(HomeFragment.newInstance(false))
     }
 
-
-
+    private fun startReplaceTransaction(fragment: Fragment, tagInBackStack: String="") {
+        val ft = supportFragmentManager.beginTransaction()
+        ft.replace(R.id.placeholder, fragment)
+        if (tagInBackStack != "")
+            ft.addToBackStack(tagInBackStack)
+        ft.commit()
+    }
 //    override fun onPostCreate(savedInstanceState: Bundle?) {
 //        super.onPostCreate(savedInstanceState)
 //        mDrawerToggle.syncState()
