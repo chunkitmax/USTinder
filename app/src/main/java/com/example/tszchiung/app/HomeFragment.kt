@@ -4,10 +4,20 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.example.tszchiung.app.adapter.CardAdapter
+import com.example.tszchiung.app.adapter.Partner
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.yuyakaido.android.cardstackview.CardStackView
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -27,12 +37,20 @@ class HomeFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var justLogin: Boolean? = null
     private var listener: OnFragmentInteractionListener? = null
+    private lateinit var cardView: CardStackView
+
+    private var adapter: CardAdapter? = null
+
+    private var mStorage: StorageReference? = null
+    private var mAuth: FirebaseAuth? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             justLogin = it.getBoolean(JUST_LOGIN)
         }
+        mAuth = FirebaseAuth.getInstance()
+        mStorage = FirebaseStorage.getInstance().reference
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -41,12 +59,39 @@ class HomeFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         view.findViewById<TextView>(R.id.greeting).text =
                 String.format("This is Home with justLogin=%b", justLogin)
+        cardView = view.findViewById(R.id.card_view)
+        adapter = CardAdapter(context!!)
+        cardView.setAdapter(adapter)
+        cardView.visibility = View.VISIBLE
+
+        mAuth = FirebaseAuth.getInstance()
+        mAuth!!.signInAnonymously().addOnSuccessListener {
+            getPartners()
+        }
+
         return view
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    fun onButtonPressed(uri: Uri) {
-        listener?.onFragmentInteraction(uri)
+    fun getPartners(): List<Partner> {
+        var partners = ArrayList<Partner>()
+        var pictureList = arrayListOf("chris.png", "girl.png")
+        var nameList = arrayListOf("Mary Lau", "Selena Yip")
+        var infoList = arrayListOf("IELM Year 3", "GBUS Year 3")
+        var taskList = ArrayList<Task<Uri>>()
+        pictureList.forEachIndexed { _, s ->
+            run {
+                taskList.add(mStorage!!.child(s).downloadUrl)
+            }
+        }
+        val allSuccessTask = Tasks.whenAllSuccess<Uri>(taskList)
+        allSuccessTask.addOnSuccessListener {
+            it.forEachIndexed { i, uri ->
+                adapter!!.add(Partner(nameList[i], infoList[i], uri))
+            }
+        }
+//        partners.add(Partner("Christy Lam", "FINA Year3"))
+//        partners.add(Partner("Cindy Wong", "ECON Year3"))
+        return partners
     }
 
     override fun onAttach(context: Context) {
