@@ -7,13 +7,72 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".HomeActivity"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:elevation="5dp">
 
-    <!-- Layout to contain contents of main body of screen (drawer will slide over this) -->
-    <FrameLayout
-        android:id="@+id/content_frame"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            android:gravity="top"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:contentInsetLeft="0dp"
+            app:contentInsetStart="0dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp">
+
+                <ImageButton
+                    android:id="@+id/drawer_toggle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="?attr/actionBarSize"
+                    android:layout_gravity="left|center_vertical"
+                    android:background="#000000ff"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_menu_white_24dp" />
+
+                <TextView
+                    android:id="@+id/title"
+                    style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textColor="@android:color/white"
+                    android:fontFamily="@font/norwester"
+                    android:text="@string/app_name" />
+
+                <ImageButton
+                    android:id="@+id/msg_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="?attr/actionBarSize"
+                    android:layout_gravity="right|center_vertical"
+                    android:background="#000000ff"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_chat_bubble_white_24dp" />
+
+            </FrameLayout>
+
+        </android.support.v7.widget.Toolbar>
+
+        <!-- Layout to contain contents of main body of screen (drawer will slide over this) -->
+        <FrameLayout
+            android:id="@+id/content_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
 
     <!-- Container for contents of drawer - use NavigationView to make configuration easier -->
     <android.support.design.widget.NavigationView
@@ -21,6 +80,11 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:fitsSystemWindows="true" />
+        android:background="#343F4B"
+        app:itemTextColor="@android:color/white"
+        app:itemTextAppearance="@style/NavigationViewItemTextAppearance"
+        app:headerLayout="@layout/home_nav_view_header"
+        app:menu="@menu/home_nav_view_menu"
+        android:fitsSystemWindows="true"/>
 
 </android.support.v4.widget.DrawerLayout>
