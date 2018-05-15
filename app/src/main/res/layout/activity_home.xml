@@ -68,7 +68,7 @@
 
         <!-- Layout to contain contents of main body of screen (drawer will slide over this) -->
         <FrameLayout
-            android:id="@+id/content_frame"
+            android:id="@+id/placeholder"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
