@@ -29,7 +29,7 @@ class HomeActivity : AppCompatActivity() {
 //            menuItem.isChecked = true
             when (menuItem.itemId) {
                 R.id.home -> startReplaceTransaction(HomeFragment.newInstance(false))
-                R.id.profile -> startReplaceTransaction(ProfileFragment.newInstance("Peter", "wahaha"))
+                R.id.recommendation -> startReplaceTransaction(RecommandationFragment.newInstance("Peter", "wahaha"))
             }
             // close drawer when item is tapped
             mDrawerLayout.closeDrawers()
