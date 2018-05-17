@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import com.example.tszchiung.app.adapter.CardAdapter
 import com.example.tszchiung.app.adapter.Partner
@@ -16,6 +17,7 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.yuyakaido.android.cardstackview.CardStackView
@@ -40,17 +42,16 @@ class HomeFragment : Fragment() {
     private var listener: OnFragmentInteractionListener? = null
     private lateinit var cardView: CardStackView
 
-    private var adapter: CardAdapter? = null
+    private lateinit var adapter: CardAdapter
+    private lateinit var progressBar: ProgressBar
 
     private var mStorage: StorageReference? = null
-    private var mAuth: FirebaseAuth? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             justLogin = it.getBoolean(JUST_LOGIN)
         }
-        mAuth = FirebaseAuth.getInstance()
         mStorage = FirebaseStorage.getInstance().reference
     }
 
@@ -65,10 +66,18 @@ class HomeFragment : Fragment() {
         cardView.setAdapter(adapter)
         cardView.visibility = View.VISIBLE
 
-        mAuth = FirebaseAuth.getInstance()
-        mAuth!!.signInAnonymously().addOnSuccessListener {
-            getPartners()
-        }
+        progressBar = view.findViewById(R.id.progress_bar)
+
+        FirebaseAuth.getInstance()!!.signInWithEmailAndPassword("cklauah@connect.ust.hk", "123456")
+                .addOnCompleteListener { task ->
+                    run {
+                        if (task.isSuccessful) {
+                            getPartners()
+                        } else {
+                            // TODO: what if authentication failed
+                        }
+                    }
+                }
 
         return view
     }
@@ -89,6 +98,7 @@ class HomeFragment : Fragment() {
             it.forEachIndexed { i, uri ->
                 adapter!!.add(Partner(nameList[i], infoList[i], uri))
             }
+            progressBar.visibility = View.GONE
         }
 //        partners.add(Partner("Christy Lam", "FINA Year3"))
 //        partners.add(Partner("Cindy Wong", "ECON Year3"))
