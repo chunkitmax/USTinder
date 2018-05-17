@@ -8,6 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="listPreferredItemHeightSmall">60dp</item>
         <item name="listPreferredItemPaddingLeft">30dp</item>
+        <item name="colorControlNormal">@android:color/white</item>
     </style>
 
     <style name="NavigationViewItemTextAppearance">
