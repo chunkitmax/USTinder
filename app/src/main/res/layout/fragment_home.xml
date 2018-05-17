@@ -4,87 +4,76 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     tools:context=".HomeFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:id="@+id/greeting"
+    <com.yuyakaido.android.cardstackview.CardStackView
+        android:id="@+id/card_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:clipToPadding="false"
+        app:translationDiff="12"
+        app:elevationEnabled="true"
+        android:paddingBottom="100dp"/>
 
     <LinearLayout
+        android:id="@+id/control_panel"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:weightSum="14">
+        android:layout_height="100dp"
+        android:layout_gravity="bottom"
+        android:weightSum="3"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-        <com.yuyakaido.android.cardstackview.CardStackView
-            android:id="@+id/card_view"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="11"
-            app:elevationEnabled="false"/>
-        
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="3"
-            android:weightSum="3"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-            
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_weight="1">
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="1">
 
-                <ImageButton
-                    android:id="@+id/skip"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:padding="18dp"
-                    android:scaleType="fitXY"
-                    android:background="@drawable/home_button"
-                    android:src="@drawable/skip"/>
+            <ImageButton
+                android:id="@+id/skip"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:padding="18dp"
+                android:scaleType="fitXY"
+                android:background="@drawable/home_button"
+                android:src="@drawable/skip"/>
 
-            </LinearLayout>
+        </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_weight="1">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="1">
 
-                <ImageButton
-                    android:id="@+id/like"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:background="@drawable/home_button"
-                    android:padding="18dp"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/superlike" />
+            <ImageButton
+                android:id="@+id/like"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/home_button"
+                android:padding="18dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/superlike" />
 
-            </LinearLayout>
+        </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_weight="1">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="1">
 
-                <ImageButton
-                    android:id="@+id/superlike"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:padding="20dp"
-                    android:paddingTop="23dp"
-                    android:scaleType="fitXY"
-                    android:background="@drawable/home_button"
-                    android:src="@drawable/like" />
-
-            </LinearLayout>
+            <ImageButton
+                android:id="@+id/superlike"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:padding="20dp"
+                android:paddingTop="23dp"
+                android:scaleType="fitXY"
+                android:background="@drawable/home_button"
+                android:src="@drawable/like" />
 
         </LinearLayout>
 

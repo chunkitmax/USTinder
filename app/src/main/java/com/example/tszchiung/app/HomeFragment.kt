@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.example.tszchiung.app.adapter.CardAdapter
 import com.example.tszchiung.app.adapter.Partner
@@ -57,8 +58,8 @@ class HomeFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home, container, false)
-        view.findViewById<TextView>(R.id.greeting).text =
-                String.format("This is Home with justLogin=%b", justLogin)
+//        view.findViewById<TextView>(R.id.greeting).text =
+//                String.format("This is Home with justLogin=%b", justLogin)
         cardView = view.findViewById(R.id.card_view)
         adapter = CardAdapter(context!!)
         cardView.setAdapter(adapter)
