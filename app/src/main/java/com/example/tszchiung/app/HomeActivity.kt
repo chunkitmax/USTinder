@@ -16,12 +16,6 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-//        val actionBar = supportActionBar
-//        actionBar!!.setDisplayHomeAsUpEnabled(false)
-//        actionBar!!.setDisplayShowTitleEnabled(false)
-//        actionBar.setCustomView(R.layout.home_custom_menu)
-//        actionBar.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
-//        actionBar.setDisplayShowCustomEnabled(true)
         setSupportActionBar(findViewById(R.id.toolbar))
 
         mDrawerLayout = findViewById(R.id.drawer_layout)
@@ -35,7 +29,7 @@ class HomeActivity : AppCompatActivity() {
 //            menuItem.isChecked = true
             when (menuItem.itemId) {
                 R.id.home -> startReplaceTransaction(HomeFragment.newInstance(false))
-                R.id.profile -> startReplaceTransaction(ProfileFragment.newInstance("Peter", "wahaha"))
+                R.id.recommendation -> startReplaceTransaction(RecommandationFragment.newInstance("Peter", "wahaha"))
             }
             // close drawer when item is tapped
             mDrawerLayout.closeDrawers()
