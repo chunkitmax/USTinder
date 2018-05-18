@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    tools:context=".AboutActivity">
+
+    <EditText
+        android:id="@+id/_bio"
+        android:layout_width="353dp"
+        android:layout_height="136dp"
+        android:layout_weight="1"
+        android:hint="Your Bio"
+        android:inputType="text"
+        app:layout_constraintBottom_toTopOf="@+id/btn_about_sign_out"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/_year" />
+
+    <EditText
+        android:id="@+id/_prefer"
+        android:layout_width="172dp"
+        android:layout_height="56dp"
+        android:layout_weight="1"
+        android:hint="Preferred Name"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/_year"
+        app:layout_constraintEnd_toStartOf="@+id/_gender"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/_last" />
+
+    <EditText
+        android:id="@+id/_gender"
+        android:layout_width="172dp"
+        android:layout_height="56dp"
+        android:layout_weight="1"
+        android:hint="Gender: M or F"
+        android:inputType="text"
+        app:layout_constraintBottom_toTopOf="@+id/_major"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/_prefer"
+        app:layout_constraintTop_toBottomOf="@+id/_first" />
+
+    <EditText
+        android:id="@+id/_year"
+        android:layout_width="172dp"
+        android:layout_height="56dp"
+        android:layout_weight="1"
+        android:hint="Year of Study"
+        android:inputType="numberDecimal"
+        app:layout_constraintBottom_toTopOf="@+id/_bio"
+        app:layout_constraintEnd_toStartOf="@+id/_major"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/_prefer" />
+
+    <EditText
+        android:id="@+id/_major"
+        android:layout_width="172dp"
+        android:layout_height="56dp"
+        android:layout_weight="1"
+        android:hint="Major"
+        android:inputType="text"
+        app:layout_constraintBottom_toTopOf="@+id/_bio"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/_year"
+        app:layout_constraintTop_toBottomOf="@+id/_gender" />
+
+    <EditText
+        android:id="@+id/_first"
+        android:layout_width="172dp"
+        android:layout_height="56dp"
+        android:layout_weight="1"
+        android:hint="First Name"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/_gender"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/_last"
+        app:layout_constraintTop_toBottomOf="@+id/about_you" />
+
+    <TextView
+        android:id="@+id/about_you"
+        android:layout_width="153dp"
+        android:layout_height="63dp"
+        android:text="About You"
+        android:textColor="#FDFEFE"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        app:fontFamily="casual"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="16dp" />
+
+    <EditText
+        android:id="@+id/_last"
+        android:layout_width="172dp"
+        android:layout_height="56dp"
+        android:layout_weight="1"
+        android:hint="Last Name"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/_prefer"
+        app:layout_constraintEnd_toStartOf="@+id/_first"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/about_you" />
+
+    <Button
+        android:id="@+id/btn_about_sign_out"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BACK"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btn_about_send"
+        app:layout_constraintTop_toBottomOf="@+id/_bio" />
+
+    <Button
+        android:id="@+id/btn_about_send"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CONTINUE"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_about_sign_out"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/_bio" />
+
+</android.support.constraint.ConstraintLayout>
