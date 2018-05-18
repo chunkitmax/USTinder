@@ -16,8 +16,7 @@ import com.example.tszchiung.app.adapter.Partner
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.yuyakaido.android.cardstackview.CardStackView
@@ -45,6 +44,7 @@ class HomeFragment : Fragment() {
     private lateinit var adapter: CardAdapter
     private lateinit var progressBar: ProgressBar
 
+
     private var mStorage: StorageReference? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,38 +71,90 @@ class HomeFragment : Fragment() {
         FirebaseAuth.getInstance()!!.signInWithEmailAndPassword("cklauah@connect.ust.hk", "123456")
                 .addOnCompleteListener { task ->
                     run {
-                        if (task.isSuccessful) {
-                            getPartners()
-                        } else {
-                            // TODO: what if authentication failed
+                        try {
+                            if (task.isSuccessful) {
+                                getPartners(task.result!!.user.email!!)
+                            }
+                        } catch (e: AssertionError) {
+                            // Authentication failed
                         }
                     }
                 }
 
+//        // TODO: use this if user has logged in
+//        FirebaseAuth.getInstance()!!.addAuthStateListener { firebaseAuth ->
+//            try {
+//                getPartners(firebaseAuth.currentUser!!.email!!)
+//            } catch (e: AssertionError){
+//                // TODO: jump back to login page
+//            }
+//        }
+
         return view
     }
 
-    fun getPartners(): List<Partner> {
-        var partners = ArrayList<Partner>()
-        var pictureList = arrayListOf("chris.png", "girl.png")
-        var nameList = arrayListOf("Mary Lau", "Selena Yip")
-        var infoList = arrayListOf("IELM Year 3", "GBUS Year 3")
-        var taskList = ArrayList<Task<Uri>>()
-        pictureList.forEachIndexed { _, s ->
-            run {
-                taskList.add(mStorage!!.child(s).downloadUrl)
-            }
-        }
-        val allSuccessTask = Tasks.whenAllSuccess<Uri>(taskList)
-        allSuccessTask.addOnSuccessListener {
-            it.forEachIndexed { i, uri ->
-                adapter!!.add(Partner(nameList[i], infoList[i], uri))
-            }
-            progressBar.visibility = View.GONE
-        }
-//        partners.add(Partner("Christy Lam", "FINA Year3"))
-//        partners.add(Partner("Cindy Wong", "ECON Year3"))
-        return partners
+//    fun getPartners(): List<Partner> {
+//        var partners = ArrayList<Partner>()
+//        var pictureList = arrayListOf("chris.png", "girl.png")
+//        var nameList = arrayListOf("Mary Lau", "Selena Yip")
+//        var infoList = arrayListOf("IELM Year 3", "GBUS Year 3")
+//        var taskList = ArrayList<Task<Uri>>()
+//        pictureList.forEachIndexed { _, s ->
+//            run {
+//                taskList.add(mStorage!!.child(s).downloadUrl)
+//            }
+//        }
+//        val allSuccessTask = Tasks.whenAllSuccess<Uri>(taskList)
+//        allSuccessTask.addOnSuccessListener {
+//            it.forEachIndexed { i, uri ->
+//                adapter!!.add(Partner(nameList[i], infoList[i], uri))
+//            }
+//            progressBar.visibility = View.GONE
+//        }
+////        partners.add(Partner("Christy Lam", "FINA Year3"))
+////        partners.add(Partner("Cindy Wong", "ECON Year3"))
+//        return partners
+//    }
+    fun getPartners(currentEmail: String) {
+        FirebaseDatabase.getInstance()!!.reference.child("users")
+                .orderByChild("gender")
+                .equalTo("M") // TODO: should be according to user's preference
+                .addValueEventListener(object: ValueEventListener {
+                    override fun onCancelled(error: DatabaseError?) {
+                        TODO("not implemented")
+                    }
+                    override fun onDataChange(snapshot: DataSnapshot?) {
+                        if (snapshot != null) {
+                            var partners = ArrayList<Partner>()
+                            val taskList = ArrayList<Task<Uri>>()
+                            val storgeRef = FirebaseStorage.getInstance()!!.reference.child("images")
+                            for (child: DataSnapshot in snapshot!!.children) {
+                                if (child.child("email").value as String != currentEmail) {
+                                    partners.add(Partner(child.child("prefer").value!! as String,
+                                            "${child.child("major").value!! as String} Year ${child.child("year").value as String}"))
+                                    taskList.add(storgeRef.child("${child.child("username").value as String}.gif").downloadUrl)
+                                }
+                            }
+                            Tasks.whenAllComplete(taskList)
+                                    .addOnSuccessListener {
+                                        val failedList = arrayListOf<Int>()
+                                        it.forEachIndexed { i, task ->
+                                            if (task.isSuccessful)
+                                                partners[i].imageUri = task.result as Uri
+                                            else
+                                                failedList.add(i)
+                                        }
+                                        partners = partners.filterIndexed { index, partner ->
+                                            failedList.indexOf(index) < 0 && partner.imageUri != null
+                                        } as ArrayList<Partner>
+                                        adapter.addAll(partners)
+                                        progressBar.visibility = View.GONE
+                                    }
+                        } else {
+                            TODO("error handling nedded")
+                        }
+                    }
+                })
     }
 
     override fun onAttach(context: Context) {

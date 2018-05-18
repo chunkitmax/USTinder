@@ -14,9 +14,9 @@ import com.example.tszchiung.app.R
 class Partner {
     var name: String
     var info: String
-    var imageUri: Uri
+    var imageUri: Uri?
 
-    constructor(name: String, info: String, imageUri: Uri) {
+    constructor(name: String, info: String, imageUri: Uri?=null) {
         this.name = name
         this.info = info
         this.imageUri = imageUri
