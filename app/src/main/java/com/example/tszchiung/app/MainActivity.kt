@@ -17,7 +17,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private val TAG = "FirebaseEmailPassword"
     private var mDatabase: DatabaseReference? = null
-    //private var mMessageReference: DatabaseReference? = null
     private var mAuth: FirebaseAuth? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,9 +29,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         btn_verify_email.setOnClickListener(this)
 
         mAuth = FirebaseAuth.getInstance()
-
         mDatabase = FirebaseDatabase.getInstance().reference
-        //mMessageReference = FirebaseDatabase.getInstance().getReference("message")
 
         /*
         val user = FirebaseAuth.getInstance().currentUser
@@ -77,13 +74,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         if (!validateForm(email, password)) {
             return
         }
-
         mAuth!!.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
                         Log.e(TAG, "createAccount: Success!")
 
-                        // update UI with the signed-in user's information
                         val user = mAuth!!.currentUser
                         updateUI(user)
                         writeNewUser(user!!.uid, getUsernameFromEmail(user.email), user.email)
@@ -100,13 +95,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         if (!validateForm(email, password)) {
             return
         }
-
         mAuth!!.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
                         Log.e(TAG, "signIn: Success!")
 
-                        // update UI with the signed-in user's information
                         val user = mAuth!!.getCurrentUser()
                         if(user!!.isEmailVerified) {
                             val intent = Intent(this, AboutActivity::class.java)
@@ -132,13 +125,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun sendEmailVerification() {
-        // Disable Verify Email button
         findViewById<View>(R.id.btn_verify_email).isEnabled = false
 
         val user = mAuth!!.currentUser
         user!!.sendEmailVerification()
                 .addOnCompleteListener(this) { task ->
-                    // Re-enable Verify Email button
                     findViewById<View>(R.id.btn_verify_email).isEnabled = true
 
                     if (task.isSuccessful) {
@@ -166,7 +157,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             Toast.makeText(applicationContext, "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show()
             return false
         }
-
         return true
     }
 
@@ -193,8 +183,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun writeNewUser(userId: String, username: String?, email: String?) {
         val user = User(username, email)
-
-        FirebaseDatabase.getInstance().reference.child("users").child(userId).setValue(user)
+        mDatabase!!.child("users").child(userId).setValue(user)
     }
 
     private fun getUsernameFromEmail(email: String?): String {

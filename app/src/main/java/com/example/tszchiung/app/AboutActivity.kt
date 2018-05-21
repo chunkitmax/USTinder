@@ -13,12 +13,14 @@ import kotlinx.android.synthetic.main.activity_about.*
 class AboutActivity : AppCompatActivity() {
 
     private var mDatabase: DatabaseReference? = null
-    private var mMessageReference: DatabaseReference? = null
     private var mAuth: FirebaseAuth? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about)
+
+        mAuth = FirebaseAuth.getInstance()
+        mDatabase = FirebaseDatabase.getInstance().reference
 
         btn_about_sign_out.setOnClickListener {
             finish()
@@ -36,15 +38,11 @@ class AboutActivity : AppCompatActivity() {
                 val info = Info(username, email, _prefer.text.toString(), _gender.text.toString(), _major.text.toString(),
                         _year.text.toString(), _last.text.toString(), _first.text.toString(), _bio.text.toString())
 
-                FirebaseDatabase.getInstance().reference.child("users").child(userid).setValue(info)
+                mDatabase!!.child("users").child(userid).setValue(info)
                 val intent = Intent(this, ImageActivity::class.java)
                 startActivity(intent)
             }
         }
-
-        mAuth = FirebaseAuth.getInstance()
-        mDatabase = FirebaseDatabase.getInstance().reference
-        mMessageReference = FirebaseDatabase.getInstance().getReference("users")
     }
 
     private fun getUsernameFromEmail(email: String?): String {
