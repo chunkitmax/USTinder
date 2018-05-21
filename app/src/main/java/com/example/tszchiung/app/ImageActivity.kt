@@ -12,10 +12,9 @@ import android.util.Log
 import android.view.View
 import android.webkit.MimeTypeMap
 import android.widget.*
-
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-
 import java.io.ByteArrayOutputStream
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -28,6 +27,7 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
 
     private var fileUri: Uri? = null
     private var bitmap: Bitmap? = null
+    private var mAuth: FirebaseAuth? = null
     private var imageReference: StorageReference? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,12 +35,14 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_image)
 
         tvFileName.text = ""
+        mAuth = FirebaseAuth.getInstance()
         imageReference = FirebaseStorage.getInstance().reference.child("images")
         btn_choose_file.setOnClickListener(this)
         btn_upload_byte.setOnClickListener(this)
         btn_upload_file.setOnClickListener(this)
         btn_upload_stream.setOnClickListener(this)
         btn_back.setOnClickListener(this)
+        btn_confirm_and_submit.setOnClickListener(this)
     }
 
     override fun onClick(view: View?) {
@@ -52,6 +54,7 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
             R.id.btn_upload_file -> uploadFile()
             R.id.btn_upload_stream -> uploadStream()
             R.id.btn_back -> finish()
+            R.id.btn_confirm_and_submit -> intentMessage()
         }
     }
 
@@ -62,7 +65,6 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
             if (!validateInputFileName(fileName)) {
                 return
             }
-
             val baos = ByteArrayOutputStream()
             bitmap!!.compress(Bitmap.CompressFormat.JPEG, 50, baos)
             val data: ByteArray = baos.toByteArray()
@@ -79,10 +81,7 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
                         Toast.makeText(this, exception.message, Toast.LENGTH_LONG).show()
                     }
                     .addOnProgressListener { taskSnapshot ->
-                        // progress percentage
                         val progress = 100.0 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount
-
-                        // percentage in progress dialog
                         val intProgress = progress.toInt()
                         tvFileName.text = "Uploaded " + intProgress + "%..."
                     }
@@ -100,7 +99,6 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
             if (!validateInputFileName(fileName)) {
                 return
             }
-
             val fileRef = imageReference!!.child(fileName + "." + getFileExtension(fileUri!!))
             fileRef.putFile(fileUri!!)
                     .addOnSuccessListener { taskSnapshot ->
@@ -113,10 +111,7 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
                         Toast.makeText(this, exception.message, Toast.LENGTH_LONG).show()
                     }
                     .addOnProgressListener { taskSnapshot ->
-                        // progress percentage
                         val progress = 100.0 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount
-
-                        // percentage in progress dialog
                         val intProgress = progress.toInt()
                         tvFileName.text = "Uploaded " + intProgress + "%..."
                     }
@@ -134,7 +129,6 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
             if (!validateInputFileName(fileName)) {
                 return
             }
-
             try {
                 val stream: InputStream = contentResolver.openInputStream(fileUri)
 
@@ -150,8 +144,6 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
                             Toast.makeText(this, exception.message, Toast.LENGTH_LONG).show()
                         }
                         .addOnProgressListener { taskSnapshot ->
-                            // because this is a stream so:
-                            // taskSnapshot.getTotalByteCount() = -1 (always)
                             tvFileName.text = "Uploaded " + taskSnapshot.bytesTransferred + " Bytes..."
                         }
                         .addOnPausedListener { System.out.println("Upload is paused!") }
@@ -170,7 +162,6 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
         if (bitmap != null) {
             bitmap!!.recycle()
         }
-
         if (requestCode == CHOOSING_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.data != null) {
             fileUri = data.data
             try {
@@ -189,6 +180,10 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
         startActivityForResult(Intent.createChooser(intent, "Select Image"), CHOOSING_IMAGE_REQUEST)
     }
 
+    private fun intentMessage() {
+        startActivity(Intent(this, MessageActivity::class.java))
+    }
+
     private fun getFileExtension(uri: Uri): String {
         val contentResolver = contentResolver
         val mime = MimeTypeMap.getSingleton()
@@ -198,10 +193,23 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun validateInputFileName(fileName: String): Boolean {
         if (TextUtils.isEmpty(fileName)) {
-            Toast.makeText(this, "Enter file name!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Enter your username as file name!", Toast.LENGTH_SHORT).show()
             return false
         }
-
+        val user = mAuth!!.currentUser
+        val username = getUsernameFromEmail(user!!.email)
+        if (fileName != username) {
+            Toast.makeText(this, "Enter your username as file name!", Toast.LENGTH_SHORT).show()
+            return false
+        }
         return true
+    }
+
+    private fun getUsernameFromEmail(email: String?): String {
+        return if (email!!.contains("@")) {
+            email.split("@".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
+        } else {
+            email
+        }
     }
 }
