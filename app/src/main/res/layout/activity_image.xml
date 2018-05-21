@@ -107,6 +107,13 @@
             android:layout_gravity="center_horizontal"
             android:text="Back" />
 
+        <Button
+            android:id="@+id/btn_confirm_and_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Confirm and Submit" />
+
     </LinearLayout>
 
 </LinearLayout>
