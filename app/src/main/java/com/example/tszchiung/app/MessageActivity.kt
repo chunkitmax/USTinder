@@ -17,12 +17,26 @@ import com.google.firebase.database.ChildEventListener
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import android.support.v7.widget.LinearLayoutManager
-import com.firebase.ui.database.ChangeEventListener
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.support.v7.app.AlertDialog
+import android.support.v7.widget.RecyclerView
+import android.view.View
+import com.example.tszchiung.app.model.User
+import kotlinx.android.synthetic.main.item_message.view.*
 
 class MessageActivity : AppCompatActivity() {
+
+    class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        fun bindMessage(message: Message?) {
+            with(message!!) {
+                itemView.tvAuthorItem.text = author
+                itemView.tvTimeItem.text = time
+                itemView.tvBodyItem.text = body
+            }
+        }
+    }
 
     private val TAG = "MessageActivity"
     private val REQUIRED = "Required"
