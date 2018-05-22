@@ -6,12 +6,13 @@ import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import com.example.tszchiung.app.model.User
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.jaeger.library.StatusBarUtil
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
@@ -24,10 +25,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        btn_email_sign_in.setOnClickListener(this)
-        btn_email_create_account.setOnClickListener(this)
-        btn_sign_out.setOnClickListener(this)
-        btn_verify_email.setOnClickListener(this)
+        sign_in.setOnClickListener(this)
+        sign_up.setOnClickListener(this)
+
+        // Layout
+        val resId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        var lp = bg.layoutParams as ViewGroup.MarginLayoutParams
+        lp.setMargins(lp.leftMargin, lp.topMargin-resources.getDimensionPixelSize(resId), lp.rightMargin, lp.bottomMargin)
+        bg.layoutParams = lp
+        StatusBarUtil.setTranslucentForImageView(this, 70, bg)
 
         mAuth = FirebaseAuth.getInstance()
         mDatabase = FirebaseDatabase.getInstance().reference
@@ -53,25 +59,27 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onStart() {
         super.onStart()
         val currentUser = mAuth!!.currentUser
-        updateUI(currentUser)
+//        updateUI(currentUser)
     }
 
     override fun onClick(view: View?) {
         val i = view!!.id
 
-        if (i == R.id.btn_email_create_account) {
-            createAccount(edtEmail.text.toString(), edtPassword.text.toString())
-        } else if (i == R.id.btn_email_sign_in) {
-            signIn(edtEmail.text.toString(), edtPassword.text.toString())
-        } else if (i == R.id.btn_sign_out) {
-            signOut()
-        } else if (i == R.id.btn_verify_email) {
-            sendEmailVerification()
+        when (i) {
+            R.id.sign_up -> run {
+                val ft = supportFragmentManager.beginTransaction()
+                ft.replace(R.id.placeholder, HomeFragment.newInstance(false))
+                ft.addToBackStack("SignUp")
+                ft.commit()
+            }
+            R.id.sign_in -> signIn(username_email.text.toString(), password.text.toString())
+//            R.id.btn_sign_out -> signOut()
+//            R.id.btn_verify_email -> sendEmailVerification()
         }
     }
 
     private fun createAccount(email: String, password: String) {
-        Log.e(TAG, "createAccount:" + email)
+        Log.e(TAG, "createAccount:$email")
         if (!validateForm(email, password)) {
             return
         }
@@ -81,18 +89,18 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                         Log.e(TAG, "createAccount: Success!")
 
                         val user = mAuth!!.currentUser
-                        updateUI(user)
+//                        updateUI(user)
                         writeNewUser(user!!.uid, getUsernameFromEmail(user.email), user.email)
                     } else {
                         Log.e(TAG, "createAccount: Fail!", task.exception)
                         Toast.makeText(applicationContext, "Authentication failed!", Toast.LENGTH_SHORT).show()
-                        updateUI(null)
+//                        updateUI(null)
                     }
                 }
     }
 
     private fun signIn(email: String, password: String) {
-        Log.e(TAG, "signIn:" + email)
+        Log.e(TAG, "signIn:$email")
         if (!validateForm(email, password)) {
             return
         }
@@ -106,33 +114,28 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                             val intent = Intent(this, AboutActivity::class.java)
                             startActivity(intent)
                         } else {
-                            updateUI(user)
+//                            updateUI(user)
                         }
                     } else {
                         Log.e(TAG, "signIn: Fail!", task.exception)
-                        Toast.makeText(applicationContext, "Authentication failed!", Toast.LENGTH_SHORT).show()
-                        updateUI(null)
-                    }
-
-                    if (!task.isSuccessful) {
-                        tvStatus.text = "Authentication failed!"
+                        Toast.makeText(this, "Invalid Username/Email or Password", Toast.LENGTH_SHORT).show()
                     }
                 }
     }
 
     private fun signOut() {
         mAuth!!.signOut()
-        updateUI(null)
+//        updateUI(null)
     }
 
     private fun sendEmailVerification() {
-        findViewById<View>(R.id.btn_verify_email).isEnabled = false
+//        findViewById<View>(R.id.btn_verify_email).isEnabled = false
 
         val user = mAuth!!.currentUser
         user!!.sendEmailVerification()
                 .addOnCompleteListener(this) { task ->
-                    findViewById<View>(R.id.btn_verify_email).isEnabled = true
-
+//                    findViewById<View>(R.id.btn_verify_email).isEnabled = true
+//
                     if (task.isSuccessful) {
                         Toast.makeText(applicationContext, "Verification email sent to " + user.email!!, Toast.LENGTH_SHORT).show()
                     } else {
@@ -161,26 +164,26 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         return true
     }
 
-    private fun updateUI(user: FirebaseUser?) {
-
-        if (user != null) {
-            tvStatus.text = "User Email: " + user.email + " (Verified: " + user.isEmailVerified + ")"
-            tvDetail.text = "User ID: " + user.uid
-
-            email_password_buttons.visibility = View.GONE
-            email_password_fields.visibility = View.GONE
-            layout_signed_in_buttons.visibility = View.VISIBLE
-
-            btn_verify_email.isEnabled = !user.isEmailVerified
-        } else {
-            tvStatus.text = "Sign Up or Sign in"
-            tvDetail.text = null
-
-            email_password_buttons.visibility = View.VISIBLE
-            email_password_fields.visibility = View.VISIBLE
-            layout_signed_in_buttons.visibility = View.GONE
-        }
-    }
+//    private fun updateUI(user: FirebaseUser?) {
+//
+//        if (user != null) {
+//            tvStatus.text = "User Email: " + user.email + " (Verified: " + user.isEmailVerified + ")"
+//            tvDetail.text = "User ID: " + user.uid
+//
+//            email_password_buttons.visibility = View.GONE
+//            email_password_fields.visibility = View.GONE
+//            layout_signed_in_buttons.visibility = View.VISIBLE
+//
+//            btn_verify_email.isEnabled = !user.isEmailVerified
+//        } else {
+//            tvStatus.text = "Sign Up or Sign in"
+//            tvDetail.text = null
+//
+//            email_password_buttons.visibility = View.VISIBLE
+//            email_password_fields.visibility = View.VISIBLE
+//            layout_signed_in_buttons.visibility = View.GONE
+//        }
+//    }
 
     private fun writeNewUser(userId: String, username: String?, email: String?) {
         val user = User(username, email)
