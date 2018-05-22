@@ -1,13 +1,14 @@
 package com.example.tszchiung.app
 
-import android.support.v7.app.AppCompatActivity
-import android.os.Bundle
 import android.content.Intent
+import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
 import android.widget.Toast
+import com.example.tszchiung.app.model.InfoWithoutExt
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_about.*
 
 class AboutActivity : AppCompatActivity() {
@@ -35,7 +36,7 @@ class AboutActivity : AppCompatActivity() {
             if(validateForm(_prefer.text.toString(), _gender.text.toString(), _major.text.toString(), _year.text.toString(),
                             _last.text.toString(), _first.text.toString(), _bio.text.toString(), _nationality.text.toString())) {
 
-                val info = Info(username, email, _prefer.text.toString(), _gender.text.toString(), _major.text.toString(),
+                val info = InfoWithoutExt(username, email, _prefer.text.toString(), _gender.text.toString(), _major.text.toString(),
                         _year.text.toString(), _last.text.toString(), _first.text.toString(), _bio.text.toString(), _nationality.text.toString())
 
                 mDatabase!!.child("users").child(userid).setValue(info)

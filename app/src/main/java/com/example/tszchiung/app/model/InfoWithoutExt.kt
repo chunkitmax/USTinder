@@ -1,9 +1,9 @@
-package com.example.tszchiung.app
+package com.example.tszchiung.app.model
 
 import com.google.firebase.database.IgnoreExtraProperties
 
 @IgnoreExtraProperties
-class Info {
+class InfoWithoutExt {
     var username: String? = null
     var email: String? = null
     var prefer: String? = null

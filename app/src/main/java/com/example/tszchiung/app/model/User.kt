@@ -1,4 +1,4 @@
-package com.example.tszchiung.app
+package com.example.tszchiung.app.model
 
 import com.google.firebase.database.IgnoreExtraProperties
 

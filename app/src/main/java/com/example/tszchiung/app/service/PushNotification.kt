@@ -1,14 +1,17 @@
-package com.example.tszchiung.app
+package com.example.tszchiung.app.service
 
-import android.util.Log
-import com.google.firebase.messaging.FirebaseMessagingService
-import com.google.firebase.messaging.RemoteMessage
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
 import android.support.v4.app.NotificationCompat
+import android.util.Log
+import com.example.tszchiung.app.MainActivity
+import com.example.tszchiung.app.MessageActivity
+import com.example.tszchiung.app.R
+import com.google.firebase.messaging.FirebaseMessagingService
+import com.google.firebase.messaging.RemoteMessage
 
 class PushNotification : FirebaseMessagingService() {
     val TAG = "Service"
