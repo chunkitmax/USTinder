@@ -3,17 +3,17 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:id="@+id/grp1">
         <item
+            android:id="@+id/home"
+            android:title="Home"/>
+        <item
             android:id="@+id/profile"
             android:title="Personal Profile"/>
         <item
             android:id="@+id/message"
             android:title="Message"/>
         <item
-            android:id="@+id/home"
-            android:title="Home"/>
-        <item
-            android:id="@+id/recommendation"
-            android:title="Recommendation"/>
+            android:id="@+id/community"
+            android:title="Community"/>
         <item
             android:id="@+id/term_policies"
             android:title="Terms And Privacy Policies"/>

@@ -40,7 +40,7 @@ class HomeActivity : AppCompatActivity() {
                         intent.putExtra("username", "tcngaa")
                         startActivityForResult(intent, PROFILE_REQUEST_CODE)
                     }
-                R.id.recommendation -> startReplaceTransaction(RecommandationFragment.newInstance("Peter", "wahaha"))
+                R.id.community -> startReplaceTransaction(CommunityFragment.newInstance("Peter", "wahaha"))
             }
             // close drawer when item is tapped
             mDrawerLayout.closeDrawers()
