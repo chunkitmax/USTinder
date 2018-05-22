@@ -32,11 +32,11 @@ class AboutActivity : AppCompatActivity() {
             val username = getUsernameFromEmail(user.email)
             val email = user.email
 
-            if(validateForm(_prefer.text.toString(), _gender.text.toString(), _major.text.toString(),
-                    _year.text.toString(), _last.text.toString(), _first.text.toString(), _bio.text.toString())) {
+            if(validateForm(_prefer.text.toString(), _gender.text.toString(), _major.text.toString(), _year.text.toString(),
+                            _last.text.toString(), _first.text.toString(), _bio.text.toString(), _nationality.text.toString())) {
 
                 val info = Info(username, email, _prefer.text.toString(), _gender.text.toString(), _major.text.toString(),
-                        _year.text.toString(), _last.text.toString(), _first.text.toString(), _bio.text.toString())
+                        _year.text.toString(), _last.text.toString(), _first.text.toString(), _bio.text.toString(), _nationality.text.toString())
 
                 mDatabase!!.child("users").child(userid).setValue(info)
                 val intent = Intent(this, ImageActivity::class.java)
@@ -54,7 +54,7 @@ class AboutActivity : AppCompatActivity() {
     }
 
     private fun validateForm(prefer: String?, gender: String?, major: String?, year: String?,
-                             last: String?, first: String?, bio: String?): Boolean {
+                             last: String?, first: String?, bio: String?, nationality: String?): Boolean {
 
         if (TextUtils.isEmpty(last)) {
             Toast.makeText(applicationContext, "Enter your last name!", Toast.LENGTH_SHORT).show()
@@ -78,6 +78,10 @@ class AboutActivity : AppCompatActivity() {
         }
         if (TextUtils.isEmpty(major)) {
             Toast.makeText(applicationContext, "Enter your major!", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        if (TextUtils.isEmpty(nationality)) {
+            Toast.makeText(applicationContext, "Enter your nationality!", Toast.LENGTH_SHORT).show()
             return false
         }
         if (TextUtils.isEmpty(bio)) {

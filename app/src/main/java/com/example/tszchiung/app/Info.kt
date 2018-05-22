@@ -13,6 +13,7 @@ class Info {
     var last: String? = null
     var first: String? = null
     var bio: String? = null
+    var nationality: String? = null
 
     constructor() {
         // default constructor
@@ -21,7 +22,8 @@ class Info {
     constructor(_username: String?, _email: String?,
                 _prefer: String?, _gender: String?,
                 _major: String?, _year: String?,
-                _last: String?, _first: String?, _bio: String?) {
+                _last: String?, _first: String?,
+                _bio: String?, _nationality: String?) {
         this.username = _username
         this.email = _email
         this.prefer = _prefer
@@ -31,5 +33,6 @@ class Info {
         this.last = _last
         this.first = _first
         this.bio = _bio
+        this.nationality = _nationality
     }
 }

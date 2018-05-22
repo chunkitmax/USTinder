@@ -20,6 +20,7 @@ import android.support.v7.widget.LinearLayoutManager
 import com.firebase.ui.database.ChangeEventListener
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.support.v7.app.AlertDialog
 
 class MessageActivity : AppCompatActivity() {
 
@@ -43,7 +44,16 @@ class MessageActivity : AppCompatActivity() {
         user = FirebaseAuth.getInstance().currentUser
 
         firebaseListenerInit()
-
+        // to be put in home page activity **********************************************************************
+        val intent = intent
+        val message = intent.getStringExtra("message")
+        if(!message.isNullOrEmpty()) {
+            AlertDialog.Builder(this)
+                    .setTitle("Notification")
+                    .setMessage(message)
+                    .setPositiveButton("Ok", { dialog, which -> }).show()
+        }
+        // to be put in home page activity **********************************************************************
         btnSend.setOnClickListener {
             submitMessage()
             edtSentText.setText("")

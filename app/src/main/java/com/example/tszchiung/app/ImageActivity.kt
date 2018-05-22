@@ -15,6 +15,8 @@ import android.widget.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import java.io.ByteArrayOutputStream
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -29,6 +31,7 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
     private var bitmap: Bitmap? = null
     private var mAuth: FirebaseAuth? = null
     private var imageReference: StorageReference? = null
+    private var mDatabase: DatabaseReference? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +39,7 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
 
         tvFileName.text = ""
         mAuth = FirebaseAuth.getInstance()
+        mDatabase = FirebaseDatabase.getInstance().reference
         imageReference = FirebaseStorage.getInstance().reference.child("images")
         btn_choose_file.setOnClickListener(this)
         btn_upload_byte.setOnClickListener(this)
@@ -86,7 +90,11 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
                         tvFileName.text = "Uploaded " + intProgress + "%..."
                     }
                     .addOnPausedListener { System.out.println("Upload is paused!") }
-
+            val user = mAuth!!.currentUser
+            val userId = user!!.uid
+            val childUpdates = HashMap<String, Any>()
+            childUpdates.put("ext", getFileExtension(fileUri!!))
+            mDatabase!!.child("users").child(userId).updateChildren(childUpdates)
         } else {
             Toast.makeText(this, "No File!", Toast.LENGTH_LONG).show()
         }
@@ -116,6 +124,11 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
                         tvFileName.text = "Uploaded " + intProgress + "%..."
                     }
                     .addOnPausedListener { System.out.println("Upload is paused!") }
+            val user = mAuth!!.currentUser
+            val userId = user!!.uid
+            val childUpdates = HashMap<String, Any>()
+            childUpdates.put("ext", getFileExtension(fileUri!!))
+            mDatabase!!.child("users").child(userId).updateChildren(childUpdates)
 
         } else {
             Toast.makeText(this, "No File!", Toast.LENGTH_LONG).show()
@@ -147,7 +160,11 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
                             tvFileName.text = "Uploaded " + taskSnapshot.bytesTransferred + " Bytes..."
                         }
                         .addOnPausedListener { System.out.println("Upload is paused!") }
-
+                val user = mAuth!!.currentUser
+                val userId = user!!.uid
+                val childUpdates = HashMap<String, Any>()
+                childUpdates.put("ext", getFileExtension(fileUri!!))
+                mDatabase!!.child("users").child(userId).updateChildren(childUpdates)
             } catch (e: FileNotFoundException) {
                 e.printStackTrace()
             }
