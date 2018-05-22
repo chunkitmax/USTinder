@@ -37,7 +37,7 @@ class HomeActivity : AppCompatActivity() {
                 R.id.profile ->
                     run {
                         val intent = Intent(this, ProfileActivity::class.java)
-                        intent.putExtra("username", "jackngtszchiu")
+                        intent.putExtra("username", "tcngaa")
                         startActivityForResult(intent, PROFILE_REQUEST_CODE)
                     }
                 R.id.recommendation -> startReplaceTransaction(RecommandationFragment.newInstance("Peter", "wahaha"))

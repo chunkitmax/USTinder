@@ -64,7 +64,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="300dp"
-        android:background="#F0F0F0">
+        android:background="#F0F0F0"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
         
         <LinearLayout
             android:layout_width="match_parent"
@@ -187,6 +189,7 @@
                     android:text="Gender"/>
 
                 <RadioGroup
+                    android:id="@+id/gender_group"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -201,8 +204,7 @@
                         android:gravity="center"
                         android:layout_weight="1"
                         android:buttonTint="@android:color/holo_green_light"
-                        android:text="Male"
-                        android:onClick="onGenderSelected"/>
+                        android:text="Male"/>
 
                     <RadioButton
                         android:id="@+id/female"
@@ -211,8 +213,7 @@
                         android:gravity="center"
                         android:layout_weight="1"
                         android:buttonTint="@android:color/holo_green_light"
-                        android:text="Female"
-                        android:onClick="onGenderSelected"/>
+                        android:text="Female"/>
                     
                 </RadioGroup>
 
