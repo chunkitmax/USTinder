@@ -9,16 +9,17 @@
 
     <EditText
         android:id="@+id/_bio"
-        android:layout_width="353dp"
-        android:layout_height="136dp"
+        android:layout_width="172dp"
+        android:layout_height="56dp"
         android:layout_weight="1"
         android:hint="Your Bio"
         android:inputType="text"
+        android:textColor="#FDFEFE"
         app:layout_constraintBottom_toTopOf="@+id/btn_about_sign_out"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/_year" />
+        app:layout_constraintStart_toEndOf="@+id/_nationality"
+        app:layout_constraintTop_toBottomOf="@+id/_major" />
 
     <EditText
         android:id="@+id/_prefer"
@@ -27,6 +28,7 @@
         android:layout_weight="1"
         android:hint="Preferred Name"
         android:inputType="textPersonName"
+        android:textColor="#FDFEFE"
         app:layout_constraintBottom_toTopOf="@+id/_year"
         app:layout_constraintEnd_toStartOf="@+id/_gender"
         app:layout_constraintHorizontal_bias="0.5"
@@ -38,8 +40,9 @@
         android:layout_width="172dp"
         android:layout_height="56dp"
         android:layout_weight="1"
-        android:hint="Gender: M or F"
+        android:hint="Gender (M/F)"
         android:inputType="text"
+        android:textColor="#FDFEFE"
         app:layout_constraintBottom_toTopOf="@+id/_major"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -53,7 +56,8 @@
         android:layout_weight="1"
         android:hint="Year of Study"
         android:inputType="numberDecimal"
-        app:layout_constraintBottom_toTopOf="@+id/_bio"
+        android:textColor="#FDFEFE"
+        app:layout_constraintBottom_toTopOf="@+id/_nationality"
         app:layout_constraintEnd_toStartOf="@+id/_major"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -66,11 +70,26 @@
         android:layout_weight="1"
         android:hint="Major"
         android:inputType="text"
+        android:textColor="#FDFEFE"
         app:layout_constraintBottom_toTopOf="@+id/_bio"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/_year"
         app:layout_constraintTop_toBottomOf="@+id/_gender" />
+
+    <EditText
+        android:id="@+id/_nationality"
+        android:layout_width="172dp"
+        android:layout_height="56dp"
+        android:layout_weight="1"
+        android:hint="Nationality"
+        android:inputType="text"
+        android:textColor="#FDFEFE"
+        app:layout_constraintBottom_toTopOf="@+id/btn_about_send"
+        app:layout_constraintEnd_toStartOf="@+id/_bio"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/_year" />
 
     <EditText
         android:id="@+id/_first"
@@ -79,6 +98,7 @@
         android:layout_weight="1"
         android:hint="First Name"
         android:inputType="textPersonName"
+        android:textColor="#FDFEFE"
         app:layout_constraintBottom_toTopOf="@+id/_gender"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -106,6 +126,7 @@
         android:layout_weight="1"
         android:hint="Last Name"
         android:inputType="textPersonName"
+        android:textColor="#FDFEFE"
         app:layout_constraintBottom_toTopOf="@+id/_prefer"
         app:layout_constraintEnd_toStartOf="@+id/_first"
         app:layout_constraintHorizontal_bias="0.5"
@@ -132,6 +153,6 @@
         app:layout_constraintEnd_toStartOf="@+id/btn_about_sign_out"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/_bio" />
+        app:layout_constraintTop_toBottomOf="@+id/_nationality" />
 
 </android.support.constraint.ConstraintLayout>
