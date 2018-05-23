@@ -2,35 +2,27 @@ package com.example.tszchiung.app
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AppCompatActivity
-import android.widget.ImageButton
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.activity_home.*
 
 class HomeActivity : AppCompatActivity() {
 
     private val PROFILE_REQUEST_CODE = 1
     private val SETTINGS_REQUEST_CODE = 2
 
-    private lateinit var mDrawerLayout: DrawerLayout
-    private lateinit var mDrawerToggle: ImageButton
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-        setSupportActionBar(findViewById(R.id.toolbar))
+        setSupportActionBar(toolbar)
 
-        mDrawerLayout = findViewById(R.id.drawer_layout)
-        mDrawerToggle = findViewById(R.id.drawer_toggle)
-        val navigationView: NavigationView = findViewById(R.id.nav_view)
 //        mDrawerLayout.bringToFront()
 
-        mDrawerToggle.setOnClickListener { mDrawerLayout.openDrawer(GravityCompat.START) }
-        navigationView.setNavigationItemSelectedListener { menuItem ->
+        drawer_toggle.setOnClickListener { drawer_layout.openDrawer(GravityCompat.START) }
+        nav_view.setNavigationItemSelectedListener { menuItem ->
             // set item as selected to persist highlight
 //            menuItem.isChecked = true
             when (menuItem.itemId) {
@@ -48,7 +40,7 @@ class HomeActivity : AppCompatActivity() {
                 }
             }
             // close drawer when item is tapped
-            mDrawerLayout.closeDrawers()
+            drawer_layout.closeDrawers()
 
             // Add code here to update the UI based on the item selected
             // For example, swap UI fragments here

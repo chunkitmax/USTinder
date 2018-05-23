@@ -4,10 +4,10 @@ import android.content.Intent
 import android.graphics.*
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.TextView
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
@@ -18,6 +18,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.jaeger.library.StatusBarUtil
 import jp.wasabeef.blurry.Blurry
+import kotlinx.android.synthetic.main.activity_profile.*
 
 class ProfileActivity : AppCompatActivity(), ValueEventListener, FirebaseAuth.AuthStateListener {
 
@@ -26,44 +27,23 @@ class ProfileActivity : AppCompatActivity(), ValueEventListener, FirebaseAuth.Au
     private var mStorage: StorageReference? = null
     private var mDatabase: DatabaseReference? = null
 
-    private lateinit var progressBar: ProgressBar
-    private lateinit var blurPic: ImageView
-    private lateinit var profilePic: ImageView
-    private lateinit var preferedName: TextView
-    private lateinit var nationality: EditText
-    private lateinit var aboutMe: EditText
-    private lateinit var yearOfStudy: EditText
-    private lateinit var major: EditText
-    private lateinit var genderGrp: RadioGroup
-
     private lateinit var userId: String
     private lateinit var userObject: Info
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         supportActionBar!!.setHomeAsUpIndicator(this.getDrawable(R.drawable.abc_ic_ab_back_material))
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        progressBar = findViewById(R.id.progress_bar)
-        blurPic = findViewById(R.id.blur_picture)
-        profilePic = findViewById(R.id.profile_pic)
-        preferedName = findViewById(R.id.prefered_name)
-        nationality = findViewById(R.id.nationality)
-        aboutMe = findViewById(R.id.about_me)
-        yearOfStudy = findViewById(R.id.year_of_study)
-        major = findViewById(R.id.major)
-        genderGrp = findViewById(R.id.gender_group)
-
         // Layout
         val resId = resources.getIdentifier("status_bar_height", "dimen", "android")
-        var lp = blurPic.layoutParams as ViewGroup.MarginLayoutParams
+        var lp = blur_picture.layoutParams as ViewGroup.MarginLayoutParams
         lp.setMargins(lp.leftMargin, lp.topMargin-resources.getDimensionPixelSize(resId), lp.rightMargin, lp.bottomMargin)
-        blurPic.layoutParams = lp
-        StatusBarUtil.setTranslucentForImageView(this, 70, blurPic)
+        blur_picture.layoutParams = lp
+        StatusBarUtil.setTranslucentForImageView(this, 70, blur_picture)
         lp = toolbar.layoutParams as ViewGroup.MarginLayoutParams
         lp.setMargins(lp.leftMargin, lp.topMargin+resources.getDimensionPixelSize(resId), lp.rightMargin, lp.bottomMargin)
         toolbar.layoutParams = lp
@@ -107,23 +87,23 @@ class ProfileActivity : AppCompatActivity(), ValueEventListener, FirebaseAuth.Au
 
         val target = object: SimpleTarget<Bitmap>() {
             override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                Blurry.with(this@ProfileActivity).radius(20).from(resource).into(blurPic)
-                profilePic.setImageBitmap(getCroppedBitmap(resource))
+                Blurry.with(this@ProfileActivity).radius(20).from(resource).into(blur_picture)
+                profile_pic.setImageBitmap(getCroppedBitmap(resource))
             }
         }
 
         userObject = snapshot.getValue(Info::class.java)!!
-        preferedName.text = userObject.prefer.orEmpty()
+        prefered_name.text = userObject.prefer.orEmpty()
         nationality.setText(userObject.nationality.orEmpty(), TextView.BufferType.EDITABLE)
-        aboutMe.setText(userObject.bio.orEmpty(), TextView.BufferType.EDITABLE)
-        yearOfStudy.setText(userObject.year.orEmpty(), TextView.BufferType.EDITABLE)
+        about_me.setText(userObject.bio.orEmpty(), TextView.BufferType.EDITABLE)
+        year_of_study.setText(userObject.year.orEmpty(), TextView.BufferType.EDITABLE)
         major.setText(userObject.major.orEmpty(), TextView.BufferType.EDITABLE)
         if (userObject.gender.isNullOrEmpty()) {
-            genderGrp.check(R.id.male)
+            gender_group.check(R.id.male)
         } else {
             when (userObject.gender) {
-                "M" -> genderGrp.check(R.id.male)
-                "F" -> genderGrp.check(R.id.female)
+                "M" -> gender_group.check(R.id.male)
+                "F" -> gender_group.check(R.id.female)
             }
         }
 
@@ -137,7 +117,7 @@ class ProfileActivity : AppCompatActivity(), ValueEventListener, FirebaseAuth.Au
                                 .into(target)
                     }
                 }
-        progressBar.visibility = View.GONE
+        progress_bar.visibility = View.GONE
     }
 
     fun finishWithStatus(reason: String) {
@@ -146,15 +126,15 @@ class ProfileActivity : AppCompatActivity(), ValueEventListener, FirebaseAuth.Au
     fun finishWithStatus(success: Boolean=true, reason: String?=null) {
         assert(success && reason == null)
         if (nationality.text.isNotEmpty() &&
-                aboutMe.text.isNotEmpty() &&
-                yearOfStudy.text.isNotEmpty() &&
+                about_me.text.isNotEmpty() &&
+                year_of_study.text.isNotEmpty() &&
                 major.text.isNotEmpty()) {
 
             userObject.nationality = nationality.text.toString()
-            userObject.bio = aboutMe.text.toString()
-            userObject.year = yearOfStudy.text.toString()
+            userObject.bio = about_me.text.toString()
+            userObject.year = year_of_study.text.toString()
             userObject.major = major.text.toString()
-            userObject.gender = when (genderGrp.checkedRadioButtonId) {
+            userObject.gender = when (gender_group.checkedRadioButtonId) {
                 R.id.male -> "M"
                 R.id.female -> "F"
                 else -> "M"
