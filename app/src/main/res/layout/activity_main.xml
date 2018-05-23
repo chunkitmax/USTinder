@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:windowSoftInputMode="adjustResize">
 
     <ImageView
         android:id="@+id/bg"
@@ -30,25 +32,45 @@
             android:textColor="#E9BDAD"
             android:textSize="60sp" />
 
-        <EditText
-            android:id="@+id/username_email"
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColorHint="@android:color/white"
-            android:fontFamily="@font/grandhotel_regular"
-            android:textSize="20sp"
+            android:theme="@style/WhiteTextInput"
             android:hint="Username or Email"
-            android:inputType="textEmailAddress" />
+            android:textColorHint="@android:color/white">
 
-        <EditText
-            android:id="@+id/password"
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/username_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:fontFamily="@font/grandhotel_regular"
+                android:maxLines="1"
+                android:textSize="20sp"
+                android:inputType="text" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColorHint="@android:color/white"
-            android:fontFamily="@font/grandhotel_regular"
-            android:textSize="20sp"
+            android:theme="@style/WhiteTextInput"
+            app:passwordToggleEnabled="true"
             android:hint="Password"
-            android:inputType="textPassword" />
+            app:passwordToggleTint="@android:color/white"
+            android:textColorHint="@android:color/white">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:fontFamily="@font/grandhotel_regular"
+                android:maxLines="1"
+                android:textSize="20sp"
+                android:inputType="textPassword" />
+
+        </android.support.design.widget.TextInputLayout>
 
         <TextView
             android:layout_width="wrap_content"
@@ -60,7 +82,8 @@
             android:layout_marginBottom="10dp"
             android:paddingStart="5dp"
             android:textSize="10sp"
-            android:text="Forget Password?"/>
+            android:text="Forget Password?"
+            android:clickable="true"/>
 
         <Button
             android:id="@+id/sign_in"
@@ -96,10 +119,5 @@
             android:text="Sign Up" />
 
     </LinearLayout>
-
-    <FrameLayout
-        android:id="@+id/placeholder"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
 </FrameLayout>

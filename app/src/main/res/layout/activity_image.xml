@@ -1,119 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:background="@drawable/background">
+    android:theme="@style/AppTheme"
+    tools:context=".ImageActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Upload Your Profile Picture"
-        android:textColor="#FDFEFE"
-        android:textSize="20sp"
-        app:fontFamily="casual" />
-
-    <LinearLayout
+    <ImageView
+        android:id="@+id/bg"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="3">
-
-        <Button
-            android:id="@+id/btn_choose_file"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Choose File" />
-
-        <EditText
-            android:id="@+id/edtFileName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:hint="File Name" />
-
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:text="Upload using:"
-        android:textColor="#FDFEFE"
-        android:textSize="18sp"
-        app:fontFamily="casual" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="3">
-
-        <Button
-            android:id="@+id/btn_upload_byte"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Bytes" />
-
-        <Button
-            android:id="@+id/btn_upload_file"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="File" />
-
-        <Button
-            android:id="@+id/btn_upload_stream"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Stream" />
-
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/tvFileName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="5dp"
-        android:text="File Name"
-        android:textColor="#FDFEFE"
-        app:fontFamily="casual" />
+        android:layout_height="match_parent"
+        android:src="@drawable/friendship"
+        android:paddingEnd="150dp"
+        android:scaleType="centerCrop" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:weightSum="5">
+        android:padding="20dp"
+        android:gravity="center"
+        android:weightSum="10"
+        android:paddingTop="0dp"
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/imgFile"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="4.7" />
+            android:text="PROFILE PICTURE"
+            android:fontFamily="@font/norwester"
+            android:textColor="@android:color/white"
+            android:textAlignment="center"
+            android:layout_weight="1"
+            android:layout_margin="30dp"
+            android:textSize="30sp"/>
+        
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="7">
+
+            <ImageView
+                android:id="@+id/preview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:background="@drawable/about_about_me"/>
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:progress="0"
+                android:max="100"/>
+
+        </FrameLayout>
 
         <Button
-            android:id="@+id/btn_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="Back" />
+            android:id="@+id/choose"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="bottom"
+            android:fontFamily="@font/norwester"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            style="?android:attr/borderlessButtonStyle"
+            android:background="@drawable/main_btn"
+            android:layout_margin="10dp"
+            android:elevation="0dp"
+            android:layout_weight="1"
+            android:text="Choose picture" />
 
         <Button
-            android:id="@+id/btn_confirm_and_submit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="Confirm and Submit" />
+            android:id="@+id/upload"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="bottom"
+            android:fontFamily="@font/norwester"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            style="?android:attr/borderlessButtonStyle"
+            android:background="@drawable/main_btn"
+            android:layout_margin="10dp"
+            android:elevation="0dp"
+            android:layout_weight="1"
+            android:text="Upload" />
 
     </LinearLayout>
 
-</LinearLayout>
+</FrameLayout>

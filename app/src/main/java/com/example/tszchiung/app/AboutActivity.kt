@@ -3,15 +3,17 @@ package com.example.tszchiung.app
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.text.TextUtils
+import android.view.ViewGroup
 import android.widget.Toast
 import com.example.tszchiung.app.model.InfoWithoutExt
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
+import com.jaeger.library.StatusBarUtil
 import kotlinx.android.synthetic.main.activity_about.*
 
 class AboutActivity : AppCompatActivity() {
+
+    private val IMAGE_REQUEST_CODE = 1
 
     private var mDatabase: DatabaseReference? = null
     private var mAuth: FirebaseAuth? = null
@@ -20,75 +22,107 @@ class AboutActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about)
 
-        mAuth = FirebaseAuth.getInstance()
-        mDatabase = FirebaseDatabase.getInstance().reference
+        // Layout
+        val resId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        var lp = bg.layoutParams as ViewGroup.MarginLayoutParams
+        lp.setMargins(lp.leftMargin, lp.topMargin-resources.getDimensionPixelSize(resId), lp.rightMargin, lp.bottomMargin)
+        bg.layoutParams = lp
+        StatusBarUtil.setTranslucentForImageView(this, 70, bg)
 
-        btn_about_sign_out.setOnClickListener {
-            finish()
-        }
-
-        btn_about_send.setOnClickListener {
-            val user = mAuth!!.currentUser
-            val userid = user!!.uid
-            val username = getUsernameFromEmail(user.email)
-            val email = user.email
-
-            if(validateForm(_prefer.text.toString(), _gender.text.toString(), _major.text.toString(), _year.text.toString(),
-                            _last.text.toString(), _first.text.toString(), _bio.text.toString(), _nationality.text.toString())) {
-
-                val info = InfoWithoutExt(username, email, _prefer.text.toString(), _gender.text.toString(), _major.text.toString(),
-                        _year.text.toString(), _last.text.toString(), _first.text.toString(), _bio.text.toString(), _nationality.text.toString())
-
-                mDatabase!!.child("users").child(userid).setValue(info)
-                val intent = Intent(this, ImageActivity::class.java)
-                startActivity(intent)
+        FirebaseAuth.getInstance()!!.addAuthStateListener {
+            val user = it.currentUser
+            if (user != null) {
+                confirm.setOnClickListener {
+                    if (validateForm()) {
+                        InfoWithoutExt()
+                        val userDbRef = FirebaseDatabase.getInstance().reference
+                                .child("users")
+                                .child(user.uid)
+                        userDbRef.addValueEventListener(object: ValueEventListener {
+                            override fun onCancelled(error: DatabaseError?) {
+                                Toast.makeText(this@AboutActivity, error!!.message, Toast.LENGTH_SHORT).show()
+                            }
+                            override fun onDataChange(snapshot: DataSnapshot?) {
+                                val info = snapshot!!.getValue(InfoWithoutExt::class.java)!!
+                                info.first = first_name.text.toString()
+                                info.last = last_name.text.toString()
+                                info.prefer = prefered_name.text.toString()
+                                info.gender = gender.text.toString()
+                                info.year = year_of_study.text.toString()
+                                info.major = major.text.toString()
+                                info.nationality = nationality.text.toString()
+                                info.bio = about_me.text.toString()
+                                userDbRef.setValue(info)
+                                        .addOnCompleteListener {
+                                            if (it.isSuccessful) {
+                                                startActivityForResult(Intent(this@AboutActivity, ImageActivity::class.java), IMAGE_REQUEST_CODE)
+                                            } else {
+                                                finishWithStatus(it.exception!!.message!!)
+                                            }
+                                        }
+                            }
+                        })
+                    }
+                }
+            } else {
+                finishWithStatus(false)
             }
         }
+
+        mAuth = FirebaseAuth.getInstance()
+        mDatabase = FirebaseDatabase.getInstance().reference
     }
 
-    private fun getUsernameFromEmail(email: String?): String {
-        return if (email!!.contains("@")) {
-            email.split("@".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
-        } else {
-            email
-        }
-    }
-
-    private fun validateForm(prefer: String?, gender: String?, major: String?, year: String?,
-                             last: String?, first: String?, bio: String?, nationality: String?): Boolean {
-
-        if (TextUtils.isEmpty(last)) {
-            Toast.makeText(applicationContext, "Enter your last name!", Toast.LENGTH_SHORT).show()
+    private fun validateForm(): Boolean {
+        if (first_name.text.isNullOrEmpty()) {
+            Toast.makeText(this, "Enter your last name!", Toast.LENGTH_SHORT).show()
             return false
         }
-        if (TextUtils.isEmpty(first)) {
-            Toast.makeText(applicationContext, "Enter your first name!", Toast.LENGTH_SHORT).show()
+        if (last_name.text.isNullOrEmpty()) {
+            Toast.makeText(this, "Enter your first name!", Toast.LENGTH_SHORT).show()
             return false
         }
-        if (TextUtils.isEmpty(prefer)) {
-            Toast.makeText(applicationContext, "Enter your preferred name!", Toast.LENGTH_SHORT).show()
+        if (prefered_name.text.isNullOrEmpty()) {
+            Toast.makeText(this, "Enter your preferred name!", Toast.LENGTH_SHORT).show()
             return false
         }
-        if (TextUtils.isEmpty(gender)) {
-            Toast.makeText(applicationContext, "Enter your gender!", Toast.LENGTH_SHORT).show()
+        gender.setText(gender.text.toString().toUpperCase())
+        if (gender.text.isNullOrEmpty() || listOf("M", "F").indexOf(gender.text.toString()) < 0) {
+            Toast.makeText(this, "Enter your gender!", Toast.LENGTH_SHORT).show()
             return false
         }
-        if (TextUtils.isEmpty(year)) {
-            Toast.makeText(applicationContext, "Enter your year of study!", Toast.LENGTH_SHORT).show()
+        if (year_of_study.text.isNullOrEmpty()) {
+            Toast.makeText(this, "Enter your year of study!", Toast.LENGTH_SHORT).show()
             return false
         }
-        if (TextUtils.isEmpty(major)) {
-            Toast.makeText(applicationContext, "Enter your major!", Toast.LENGTH_SHORT).show()
+        if (major.text.isNullOrEmpty()) {
+            Toast.makeText(this, "Enter your major!", Toast.LENGTH_SHORT).show()
             return false
         }
-        if (TextUtils.isEmpty(nationality)) {
-            Toast.makeText(applicationContext, "Enter your nationality!", Toast.LENGTH_SHORT).show()
+        if (nationality.text.isNullOrEmpty()) {
+            Toast.makeText(this, "Enter your nationality!", Toast.LENGTH_SHORT).show()
             return false
         }
-        if (TextUtils.isEmpty(bio)) {
-            Toast.makeText(applicationContext, "Enter your bio!", Toast.LENGTH_SHORT).show()
+        if (about_me.text.isNullOrEmpty()) {
+            Toast.makeText(this, "Enter your bio!", Toast.LENGTH_SHORT).show()
             return false
         }
         return true
+    }
+
+    fun finishWithStatus(reason: String) {
+        finishWithStatus(false, reason)
+    }
+
+    fun finishWithStatus(success: Boolean=true, reason: String?=null) {
+        assert(success && reason == null)
+        val result = Intent()
+        if (!success) {
+            result.putExtra("reason", reason)
+            setResult(0, result)
+        }
+        else
+            setResult(1, result)
+        finish()
     }
 }

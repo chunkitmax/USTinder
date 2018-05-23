@@ -1,158 +1,262 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
+    android:theme="@style/AppTheme"
     tools:context=".AboutActivity">
 
-    <EditText
-        android:id="@+id/_bio"
-        android:layout_width="172dp"
-        android:layout_height="56dp"
-        android:layout_weight="1"
-        android:hint="Your Bio"
-        android:inputType="text"
-        android:textColor="#FDFEFE"
-        app:layout_constraintBottom_toTopOf="@+id/btn_about_sign_out"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/_nationality"
-        app:layout_constraintTop_toBottomOf="@+id/_major" />
+    <ImageView
+        android:id="@+id/bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/friendship"
+        android:paddingEnd="150dp"
+        android:scaleType="centerCrop" />
 
-    <EditText
-        android:id="@+id/_prefer"
-        android:layout_width="172dp"
-        android:layout_height="56dp"
-        android:layout_weight="1"
-        android:hint="Preferred Name"
-        android:inputType="textPersonName"
-        android:textColor="#FDFEFE"
-        app:layout_constraintBottom_toTopOf="@+id/_year"
-        app:layout_constraintEnd_toStartOf="@+id/_gender"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/_last" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="20dp"
+        android:gravity="center"
+        android:weightSum="10"
+        android:paddingTop="0dp"
+        android:orientation="vertical">
+        
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:text="ABOUT YOU"
+            android:fontFamily="@font/norwester"
+            android:textColor="@android:color/white"
+            android:textAlignment="center"
+            android:layout_weight="1"
+            android:layout_margin="30dp"
+            android:textSize="30sp"/>
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:weightSum="2">
 
-    <EditText
-        android:id="@+id/_gender"
-        android:layout_width="172dp"
-        android:layout_height="56dp"
-        android:layout_weight="1"
-        android:hint="Gender (M/F)"
-        android:inputType="text"
-        android:textColor="#FDFEFE"
-        app:layout_constraintBottom_toTopOf="@+id/_major"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/_prefer"
-        app:layout_constraintTop_toBottomOf="@+id/_first" />
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:theme="@style/WhiteTextInput"
+                android:layout_weight="1"
+                android:hint="First name"
+                android:paddingEnd="30dp"
+                android:textColorHint="@android:color/white">
 
-    <EditText
-        android:id="@+id/_year"
-        android:layout_width="172dp"
-        android:layout_height="56dp"
-        android:layout_weight="1"
-        android:hint="Year of Study"
-        android:inputType="numberDecimal"
-        android:textColor="#FDFEFE"
-        app:layout_constraintBottom_toTopOf="@+id/_nationality"
-        app:layout_constraintEnd_toStartOf="@+id/_major"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/_prefer" />
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/first_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:fontFamily="@font/grandhotel_regular"
+                    android:textSize="20sp"
+                    android:inputType="text" />
 
-    <EditText
-        android:id="@+id/_major"
-        android:layout_width="172dp"
-        android:layout_height="56dp"
-        android:layout_weight="1"
-        android:hint="Major"
-        android:inputType="text"
-        android:textColor="#FDFEFE"
-        app:layout_constraintBottom_toTopOf="@+id/_bio"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/_year"
-        app:layout_constraintTop_toBottomOf="@+id/_gender" />
+            </android.support.design.widget.TextInputLayout>
 
-    <EditText
-        android:id="@+id/_nationality"
-        android:layout_width="172dp"
-        android:layout_height="56dp"
-        android:layout_weight="1"
-        android:hint="Nationality"
-        android:inputType="text"
-        android:textColor="#FDFEFE"
-        app:layout_constraintBottom_toTopOf="@+id/btn_about_send"
-        app:layout_constraintEnd_toStartOf="@+id/_bio"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/_year" />
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:theme="@style/WhiteTextInput"
+                android:layout_weight="1"
+                android:hint="Last name"
+                android:paddingStart="30dp"
+                android:textColorHint="@android:color/white">
 
-    <EditText
-        android:id="@+id/_first"
-        android:layout_width="172dp"
-        android:layout_height="56dp"
-        android:layout_weight="1"
-        android:hint="First Name"
-        android:inputType="textPersonName"
-        android:textColor="#FDFEFE"
-        app:layout_constraintBottom_toTopOf="@+id/_gender"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/_last"
-        app:layout_constraintTop_toBottomOf="@+id/about_you" />
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/last_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:fontFamily="@font/grandhotel_regular"
+                    android:textSize="20sp"
+                    android:inputType="text" />
 
-    <TextView
-        android:id="@+id/about_you"
-        android:layout_width="153dp"
-        android:layout_height="63dp"
-        android:text="About You"
-        android:textColor="#FDFEFE"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        app:fontFamily="casual"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="16dp" />
+            </android.support.design.widget.TextInputLayout>
 
-    <EditText
-        android:id="@+id/_last"
-        android:layout_width="172dp"
-        android:layout_height="56dp"
-        android:layout_weight="1"
-        android:hint="Last Name"
-        android:inputType="textPersonName"
-        android:textColor="#FDFEFE"
-        app:layout_constraintBottom_toTopOf="@+id/_prefer"
-        app:layout_constraintEnd_toStartOf="@+id/_first"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/about_you" />
+        </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_about_sign_out"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="BACK"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btn_about_send"
-        app:layout_constraintTop_toBottomOf="@+id/_bio" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:weightSum="2">
 
-    <Button
-        android:id="@+id/btn_about_send"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="CONTINUE"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btn_about_sign_out"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/_nationality" />
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:theme="@style/WhiteTextInput"
+                android:layout_weight="1"
+                android:hint="Prefered name"
+                android:paddingEnd="30dp"
+                android:textColorHint="@android:color/white">
 
-</android.support.constraint.ConstraintLayout>
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/prefered_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:fontFamily="@font/grandhotel_regular"
+                    android:textSize="20sp"
+                    android:inputType="text" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:theme="@style/WhiteTextInput"
+                android:layout_weight="1"
+                android:hint="Gender"
+                android:paddingStart="30dp"
+                android:textColorHint="@android:color/white">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/gender"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:fontFamily="@font/grandhotel_regular"
+                    android:textSize="20sp"
+                    android:inputType="text" />
+
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:weightSum="2">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:theme="@style/WhiteTextInput"
+                android:layout_weight="1"
+                android:hint="Year of study"
+                android:paddingEnd="30dp"
+                android:textColorHint="@android:color/white">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/year_of_study"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:fontFamily="@font/grandhotel_regular"
+                    android:textSize="20sp"
+                    android:inputType="text" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:theme="@style/WhiteTextInput"
+                android:layout_weight="1"
+                android:hint="Major"
+                android:paddingStart="30dp"
+                android:textColorHint="@android:color/white">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/major"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:fontFamily="@font/grandhotel_regular"
+                    android:textSize="20sp"
+                    android:inputType="text" />
+
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:weightSum="2">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:theme="@style/WhiteTextInput"
+                android:layout_weight="1"
+                android:hint="Nationality"
+                android:paddingEnd="30dp"
+                android:textColorHint="@android:color/white">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/nationality"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:fontFamily="@font/grandhotel_regular"
+                    android:textSize="20sp"
+                    android:inputType="text" />
+
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4"
+            android:weightSum="10"
+            android:paddingTop="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:theme="@style/WhiteTextInput"
+                android:fontFamily="@font/grandhotel_regular"
+                android:textSize="20sp"
+                android:layout_weight="2"
+                android:paddingStart="5dp"
+                android:hint="About me"
+                android:textColorHint="@android:color/white" />
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/about_me"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="8"
+                android:layout_marginBottom="20dp"
+                android:textColor="@android:color/white"
+                android:fontFamily="@font/grandhotel_regular"
+                android:background="@drawable/about_about_me"
+                android:textSize="20sp"
+                android:inputType="textMultiLine" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/confirm"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="bottom"
+            android:fontFamily="@font/norwester"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            style="?android:attr/borderlessButtonStyle"
+            android:background="@drawable/main_btn"
+            android:elevation="0dp"
+            android:layout_weight="1"
+            android:text="Confirm" />
+
+    </LinearLayout>
+
+</FrameLayout>

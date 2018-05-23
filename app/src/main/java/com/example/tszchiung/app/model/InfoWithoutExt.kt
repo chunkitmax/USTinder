@@ -19,20 +19,25 @@ class InfoWithoutExt {
         // default constructor
     }
 
-    constructor(_username: String?, _email: String?,
-                _prefer: String?, _gender: String?,
-                _major: String?, _year: String?,
-                _last: String?, _first: String?,
-                _bio: String?, _nationality: String?) {
-        this.username = _username
-        this.email = _email
-        this.prefer = _prefer
-        this.gender = _gender
-        this.major = _major
-        this.year = _year
-        this.last = _last
-        this.first = _first
-        this.bio = _bio
-        this.nationality = _nationality
+    constructor(email: String?, username: String?) {
+        this.email = email
+        this.username = username
+    }
+
+    constructor(username: String?, email: String?,
+                prefer: String?, gender: String?,
+                major: String?, year: String?,
+                last: String?, first: String?,
+                bio: String?, nationality: String?) {
+        this.username = username
+        this.email = email
+        this.prefer = prefer
+        this.gender = gender
+        this.major = major
+        this.year = year
+        this.last = last
+        this.first = first
+        this.bio = bio
+        this.nationality = nationality
     }
 }

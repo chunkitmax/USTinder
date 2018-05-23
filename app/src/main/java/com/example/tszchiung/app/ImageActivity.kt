@@ -3,24 +3,20 @@ package com.example.tszchiung.app
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
-import android.provider.MediaStore
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import kotlinx.android.synthetic.main.activity_image.*
-import android.text.TextUtils
-import android.util.Log
+import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.view.ViewGroup
 import android.webkit.MimeTypeMap
-import android.widget.*
+import android.widget.Toast
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import java.io.ByteArrayOutputStream
-import java.io.FileNotFoundException
+import com.jaeger.library.StatusBarUtil
+import kotlinx.android.synthetic.main.activity_image.*
 import java.io.IOException
-import java.io.InputStream
 
 class ImageActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -29,161 +25,94 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
 
     private var fileUri: Uri? = null
     private var bitmap: Bitmap? = null
-    private var mAuth: FirebaseAuth? = null
-    private var imageReference: StorageReference? = null
-    private var mDatabase: DatabaseReference? = null
+    private lateinit var mAuth: FirebaseAuth
+    private lateinit var imageReference: StorageReference
+    private lateinit var mDatabase: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_image)
 
-        tvFileName.text = ""
-        mAuth = FirebaseAuth.getInstance()
-        mDatabase = FirebaseDatabase.getInstance().reference
-        imageReference = FirebaseStorage.getInstance().reference.child("images")
-        btn_choose_file.setOnClickListener(this)
-        btn_upload_byte.setOnClickListener(this)
-        btn_upload_file.setOnClickListener(this)
-        btn_upload_stream.setOnClickListener(this)
-        btn_back.setOnClickListener(this)
-        btn_confirm_and_submit.setOnClickListener(this)
-    }
+        // Layout
+        val resId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        var lp = bg.layoutParams as ViewGroup.MarginLayoutParams
+        lp.setMargins(lp.leftMargin, lp.topMargin-resources.getDimensionPixelSize(resId), lp.rightMargin, lp.bottomMargin)
+        bg.layoutParams = lp
+        StatusBarUtil.setTranslucentForImageView(this, 70, bg)
 
-    override fun onClick(view: View?) {
-        val i = view!!.id
-
-        when (i) {
-            R.id.btn_choose_file -> showChoosingFile()
-            R.id.btn_upload_byte -> uploadBytes()
-            R.id.btn_upload_file -> uploadFile()
-            R.id.btn_upload_stream -> uploadStream()
-            R.id.btn_back -> finish()
-            R.id.btn_confirm_and_submit -> intentMessage()
+        FirebaseAuth.getInstance()!!.addAuthStateListener {
+            val user = it.currentUser
+            if (user != null) {
+                choose.setOnClickListener(this)
+                upload.setOnClickListener(this)
+                mAuth = it
+                mDatabase = FirebaseDatabase.getInstance().reference.child("users").child(user.uid)
+                imageReference = FirebaseStorage.getInstance().reference.child("images")
+            } else {
+                finishWithStatus(false,"Cannot get current user!")
+            }
         }
     }
 
-    private fun uploadBytes() {
-        if (fileUri != null) {
-            val fileName = edtFileName.text.toString()
-
-            if (!validateInputFileName(fileName)) {
-                return
-            }
-            val baos = ByteArrayOutputStream()
-            bitmap!!.compress(Bitmap.CompressFormat.JPEG, 50, baos)
-            val data: ByteArray = baos.toByteArray()
-
-            val fileRef = imageReference!!.child(fileName + "." + getFileExtension(fileUri!!))
-            fileRef.putBytes(data)
-                    .addOnSuccessListener { taskSnapshot ->
-                        Log.e(TAG, "Uri: " + taskSnapshot.downloadUrl)
-                        Log.e(TAG, "Name: " + taskSnapshot.metadata!!.name)
-                        tvFileName.text = taskSnapshot.metadata!!.path + " - " + taskSnapshot.metadata!!.sizeBytes / 1024 + " KBs"
-                        Toast.makeText(this, "File Uploaded ", Toast.LENGTH_LONG).show()
-                    }
-                    .addOnFailureListener { exception ->
-                        Toast.makeText(this, exception.message, Toast.LENGTH_LONG).show()
-                    }
-                    .addOnProgressListener { taskSnapshot ->
-                        val progress = 100.0 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount
-                        val intProgress = progress.toInt()
-                        tvFileName.text = "Uploaded " + intProgress + "%..."
-                    }
-                    .addOnPausedListener { System.out.println("Upload is paused!") }
-            val user = mAuth!!.currentUser
-            val userId = user!!.uid
-            val childUpdates = HashMap<String, Any>()
-            childUpdates.put("ext", getFileExtension(fileUri!!))
-            mDatabase!!.child("users").child(userId).updateChildren(childUpdates)
-        } else {
-            Toast.makeText(this, "No File!", Toast.LENGTH_LONG).show()
+    override fun onClick(view: View?) {
+        when (view!!.id) {
+            R.id.choose -> showChoosingFile()
+            R.id.upload -> uploadFile()
         }
     }
 
     private fun uploadFile() {
         if (fileUri != null) {
-            val fileName = edtFileName.text.toString()
-
-            if (!validateInputFileName(fileName)) {
-                return
-            }
-            val fileRef = imageReference!!.child(fileName + "." + getFileExtension(fileUri!!))
-            fileRef.putFile(fileUri!!)
-                    .addOnSuccessListener { taskSnapshot ->
-                        Log.e(TAG, "Uri: " + taskSnapshot.downloadUrl)
-                        Log.e(TAG, "Name: " + taskSnapshot.metadata!!.name)
-                        tvFileName.text = taskSnapshot.metadata!!.path + " - " + taskSnapshot.metadata!!.sizeBytes / 1024 + " KBs"
-                        Toast.makeText(this, "File Uploaded ", Toast.LENGTH_LONG).show()
-                    }
-                    .addOnFailureListener { exception ->
-                        Toast.makeText(this, exception.message, Toast.LENGTH_LONG).show()
-                    }
-                    .addOnProgressListener { taskSnapshot ->
-                        val progress = 100.0 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount
-                        val intProgress = progress.toInt()
-                        tvFileName.text = "Uploaded " + intProgress + "%..."
-                    }
-                    .addOnPausedListener { System.out.println("Upload is paused!") }
-            val user = mAuth!!.currentUser
-            val userId = user!!.uid
-            val childUpdates = HashMap<String, Any>()
-            childUpdates.put("ext", getFileExtension(fileUri!!))
-            mDatabase!!.child("users").child(userId).updateChildren(childUpdates)
+            mDatabase.child("username")
+                    .addListenerForSingleValueEvent(object: ValueEventListener {
+                        override fun onCancelled(error: DatabaseError?) {
+                            finishWithStatus(error!!.message)
+                        }
+                        override fun onDataChange(snapshot: DataSnapshot?) {
+                            try {
+                                val fileRef = imageReference.child("${snapshot!!.value as String}.${getFileExtension(fileUri!!)}")
+                                progress_bar.progress = 0
+                                progress_bar.visibility = View.VISIBLE
+                                fileRef.putFile(fileUri!!)
+                                        .addOnSuccessListener {
+                                            val childUpdates = HashMap<String, Any>()
+                                            childUpdates["ext"] = getFileExtension(fileUri!!)
+                                            mDatabase.updateChildren(childUpdates)
+                                                    .addOnCompleteListener {
+                                                        if (it.isSuccessful) {
+                                                            finishWithStatus(true)
+                                                        } else {
+                                                            finishWithStatus(it.exception!!.message!!)
+                                                        }
+                                                    }
+                                        }
+                                        .addOnFailureListener { exception ->
+                                            Toast.makeText(this@ImageActivity, exception.message, Toast.LENGTH_LONG).show()
+                                        }
+                                        .addOnProgressListener { taskSnapshot ->
+                                            progress_bar.progress = (100.0 * taskSnapshot.bytesTransferred / progress_bar.max).toInt()
+                                        }
+                                        .addOnPausedListener { System.out.println("Upload is paused!") }
+                                intent
+                            } catch (e: Exception) {
+                                finishWithStatus(e.message!!)
+                            }
+                        }
+                    })
 
         } else {
-            Toast.makeText(this, "No File!", Toast.LENGTH_LONG).show()
-        }
-    }
-
-    private fun uploadStream() {
-        if (fileUri != null) {
-            val fileName = edtFileName.text.toString()
-
-            if (!validateInputFileName(fileName)) {
-                return
-            }
-            try {
-                val stream: InputStream = contentResolver.openInputStream(fileUri)
-
-                val fileRef = imageReference!!.child(fileName + "." + getFileExtension(fileUri!!))
-                fileRef.putStream(stream)
-                        .addOnSuccessListener { taskSnapshot ->
-                            Log.e(TAG, "Uri: " + taskSnapshot.downloadUrl)
-                            Log.e(TAG, "Name: " + taskSnapshot.metadata!!.name)
-                            tvFileName.text = taskSnapshot.metadata!!.path + " - " + taskSnapshot.metadata!!.sizeBytes / 1024 + " KBs"
-                            Toast.makeText(this, "File Uploaded ", Toast.LENGTH_LONG).show()
-                        }
-                        .addOnFailureListener { exception ->
-                            Toast.makeText(this, exception.message, Toast.LENGTH_LONG).show()
-                        }
-                        .addOnProgressListener { taskSnapshot ->
-                            tvFileName.text = "Uploaded " + taskSnapshot.bytesTransferred + " Bytes..."
-                        }
-                        .addOnPausedListener { System.out.println("Upload is paused!") }
-                val user = mAuth!!.currentUser
-                val userId = user!!.uid
-                val childUpdates = HashMap<String, Any>()
-                childUpdates.put("ext", getFileExtension(fileUri!!))
-                mDatabase!!.child("users").child(userId).updateChildren(childUpdates)
-            } catch (e: FileNotFoundException) {
-                e.printStackTrace()
-            }
-        } else {
-            Toast.makeText(this, "No File!", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "No File chosen!", Toast.LENGTH_LONG).show()
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
         if (bitmap != null) {
             bitmap!!.recycle()
         }
         if (requestCode == CHOOSING_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.data != null) {
             fileUri = data.data
             try {
-                bitmap = MediaStore.Images.Media.getBitmap(contentResolver, fileUri)
-                imgFile.setImageBitmap(bitmap)
+                Glide.with(this).load(fileUri).into(preview)
             } catch (e: IOException) {
                 e.printStackTrace()
             }
@@ -197,10 +126,6 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
         startActivityForResult(Intent.createChooser(intent, "Select Image"), CHOOSING_IMAGE_REQUEST)
     }
 
-    private fun intentMessage() {
-        startActivity(Intent(this, MessageActivity::class.java))
-    }
-
     private fun getFileExtension(uri: Uri): String {
         val contentResolver = contentResolver
         val mime = MimeTypeMap.getSingleton()
@@ -208,25 +133,21 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
         return mime.getExtensionFromMimeType(contentResolver.getType(uri))
     }
 
-    private fun validateInputFileName(fileName: String): Boolean {
-        if (TextUtils.isEmpty(fileName)) {
-            Toast.makeText(this, "Enter your username as file name!", Toast.LENGTH_SHORT).show()
-            return false
-        }
-        val user = mAuth!!.currentUser
-        val username = getUsernameFromEmail(user!!.email)
-        if (fileName != username) {
-            Toast.makeText(this, "Enter your username as file name!", Toast.LENGTH_SHORT).show()
-            return false
-        }
-        return true
+    override fun onBackPressed() {}
+
+    fun finishWithStatus(reason: String) {
+        finishWithStatus(false, reason)
     }
 
-    private fun getUsernameFromEmail(email: String?): String {
-        return if (email!!.contains("@")) {
-            email.split("@".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
-        } else {
-            email
+    fun finishWithStatus(success: Boolean=true, reason: String?=null) {
+        assert(success && reason == null)
+        val result = Intent()
+        if (!success) {
+            result.putExtra("reason", reason)
+            setResult(0, result)
         }
+        else
+            setResult(1, result)
+        finish()
     }
 }

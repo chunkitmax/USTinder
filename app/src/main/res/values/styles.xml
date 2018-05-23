@@ -16,4 +16,10 @@
         <item name="android:textSize">20sp</item>
     </style>
 
+    <style name="WhiteTextInput" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorControlNormal">@android:color/white</item>
+        <item name="colorControlActivated">@android:color/white</item>
+        <item name="colorControlHighlight">@android:color/white</item>
+    </style>
+
 </resources>

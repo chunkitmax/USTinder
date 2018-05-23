@@ -2,8 +2,8 @@ package com.example.tszchiung.app
 
 import android.content.Intent
 import android.graphics.*
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.View
 import android.view.ViewGroup
@@ -68,10 +68,6 @@ class ProfileActivity : AppCompatActivity(), ValueEventListener {
         lp.setMargins(lp.leftMargin, lp.topMargin+resources.getDimensionPixelSize(resId), lp.rightMargin, lp.bottomMargin)
         toolbar.layoutParams = lp
 
-        // user & fragment settings
-        REQUEST_CODE = intent.extras!!.getInt("request_code", -1)
-        assert(REQUEST_CODE >= 0)
-
         FirebaseAuth.getInstance()!!.signInWithEmailAndPassword("tcngaa@connect.ust.hk", "123456")
                 .addOnCompleteListener { task ->
                     run {
@@ -86,15 +82,6 @@ class ProfileActivity : AppCompatActivity(), ValueEventListener {
                         }
                     }
                 }
-    }
-
-    override fun onBackPressed() {
-        finishWithStatus()
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        finishWithStatus()
-        return true
     }
 
     private fun getUserInfo() {
@@ -169,10 +156,12 @@ class ProfileActivity : AppCompatActivity(), ValueEventListener {
             mDatabase!!.child("users").child(userId).removeEventListener(this)
 
             val result = Intent()
-            result.putExtra("success", success)
-            if (!success)
+            if (!success) {
                 result.putExtra("reason", reason)
-            setResult(REQUEST_CODE, result)
+                setResult(0, result)
+            }
+            else
+                setResult(1, result)
             finish()
         } else {
             Toast.makeText(this, "Please fill in all fields before leave", Toast.LENGTH_LONG).show()
