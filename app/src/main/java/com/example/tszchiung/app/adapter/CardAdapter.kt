@@ -14,11 +14,13 @@ import com.example.tszchiung.app.R
 class Partner {
     var name: String
     var info: String
+    var email: String
     var imageUri: Uri?
 
-    constructor(name: String, info: String, imageUri: Uri?=null) {
+    constructor(name: String, info: String, email: String, imageUri: Uri?=null) {
         this.name = name
         this.info = info
+        this.email = email
         this.imageUri = imageUri
     }
 }
@@ -26,9 +28,10 @@ class Partner {
 class CardAdapter(context: Context) : ArrayAdapter<Partner>(context, 0) {
 
     class ViewHolder {
-        public var name: TextView
-        public var info: TextView
-        public var image: ImageView
+        var name: TextView
+        var info: TextView
+        var email: String? = null
+        var image: ImageView
         constructor(view: View) {
             this.name = view.findViewById(R.id.name)
             this.info = view.findViewById(R.id.info)
@@ -52,6 +55,7 @@ class CardAdapter(context: Context) : ArrayAdapter<Partner>(context, 0) {
         var p: Partner = getItem(position)
         holder.name.text = p.name
         holder.info.text = p.info
+        holder.email = p.email
         try {
             Glide.with(context).load(p.imageUri).into(holder.image)
         } catch(e: IllegalArgumentException) {}

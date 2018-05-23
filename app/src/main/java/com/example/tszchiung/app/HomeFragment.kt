@@ -13,18 +13,12 @@ import com.example.tszchiung.app.adapter.Partner
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.yuyakaido.android.cardstackview.CardStackView
+import com.yuyakaido.android.cardstackview.SwipeDirection
 
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val JUST_LOGIN = "justLogin"
 
 /**
  * A simple [Fragment] subclass.
@@ -35,14 +29,14 @@ private const val JUST_LOGIN = "justLogin"
  * create an instance of this fragment.
  *
  */
-class HomeFragment : Fragment(), FirebaseAuth.AuthStateListener {
-
-    private lateinit var cardView: CardStackView
+class HomeFragment : Fragment(), FirebaseAuth.AuthStateListener, CardStackView.CardEventListener {
 
     private lateinit var adapter: CardAdapter
-    private lateinit var progressBar: ProgressBar
-
+    private lateinit var mAuth: FirebaseAuth
     private lateinit var mStorage: StorageReference
+    private lateinit var mDatabase: DatabaseReference
+
+    private var allUser = HashMap<String, String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,14 +48,14 @@ class HomeFragment : Fragment(), FirebaseAuth.AuthStateListener {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 //        view.findViewById<TextView>(R.id.greeting).text =
 //                String.format("This is Home with justLogin=%b", justLogin)
-        cardView = view.findViewById(R.id.card_view)
         adapter = CardAdapter(context!!)
+        val cardView = view.findViewById<CardStackView>(R.id.card_view)
         cardView.setAdapter(adapter)
         cardView.visibility = View.VISIBLE
 
-        progressBar = view.findViewById(R.id.progress_bar)
-
         FirebaseAuth.getInstance()!!.addAuthStateListener(this)
+
+        cardView.setCardEventListener(this)
 
         return view
     }
@@ -69,7 +63,9 @@ class HomeFragment : Fragment(), FirebaseAuth.AuthStateListener {
     override fun onAuthStateChanged(it: FirebaseAuth) {
         val user = it.currentUser
         if (user != null) {
-            mStorage = FirebaseStorage.getInstance().reference
+            mAuth = it
+            mStorage = FirebaseStorage.getInstance().reference.child("images")
+            mDatabase = FirebaseDatabase.getInstance().reference.child("users").child(user.uid)
             getPartners(it.currentUser!!.email!!)
         } else {
             Toast.makeText(this@HomeFragment.context, "Please log in.", Toast.LENGTH_SHORT).show()
@@ -80,43 +76,81 @@ class HomeFragment : Fragment(), FirebaseAuth.AuthStateListener {
 
     fun getPartners(currentEmail: String) {
         FirebaseDatabase.getInstance()!!.reference.child("users")
-                .orderByChild("gender")
-                .equalTo("M") // TODO: should be according to user's preference
                 .addValueEventListener(object: ValueEventListener {
                     override fun onCancelled(error: DatabaseError?) {}
                     override fun onDataChange(snapshot: DataSnapshot?) {
-                        if (snapshot != null) {
-                            var partners = ArrayList<Partner>()
-                            val taskList = ArrayList<Task<Uri>>()
-                            val storgeRef = FirebaseStorage.getInstance()!!.reference.child("images")
-                            for (child: DataSnapshot in snapshot!!.children) {
-                                if (child.child("email").value as String != currentEmail) {
-                                    partners.add(Partner(child.child("prefer").value!! as String,
-                                            "${child.child("major").value!! as String} Year ${child.child("year").value as String}"))
-                                    taskList.add(storgeRef.child("${child.child("username").value as String}.${child.child("ext").value as String}").downloadUrl)
-                                }
+                        var partners = ArrayList<Partner>()
+                        val taskList = ArrayList<Task<Uri>>()
+                        val userObj = snapshot!!.children.filter {
+                            it.key == mAuth.currentUser!!.uid
+                        }[0]
+                        val targetMajor = userObj.child("major").value as String
+                        val ratedUserList = ArrayList<String>()
+                        listOf("skip", "like", "super").forEach {
+                            if (userObj.hasChild(it)) {
+                                ratedUserList += userObj.child(it).children.map { it.key }
                             }
-                            Tasks.whenAllComplete(taskList)
-                                    .addOnSuccessListener {
-                                        val failedList = arrayListOf<Int>()
-                                        it.forEachIndexed { i, task ->
-                                            if (task.isSuccessful)
-                                                partners[i].imageUri = task.result as Uri
-                                            else
-                                                failedList.add(i)
-                                        }
-                                        partners = partners.filterIndexed { index, partner ->
-                                            failedList.indexOf(index) < 0 && partner.imageUri != null
-                                        } as ArrayList<Partner>
-                                        adapter.addAll(partners)
-                                        progressBar.visibility = View.GONE
-                                    }
-                        } else {
-                            TODO("error handling nedded")
                         }
+                        val ratedUserSet = ratedUserList.toSet()
+                        allUser.clear()
+                        snapshot.children.filter {
+                            ratedUserSet.indexOf(it.key) < 0 &&
+                                    it.hasChild("major") &&
+                                    it.child("major").value!! as String == targetMajor &&
+                                    it.key != mAuth.currentUser!!.uid
+                        }.forEach {
+                            allUser[it.child("email").value as String] = it.key
+                            partners.add(Partner(it.child("prefer").value!! as String,
+                                    "${it.child("major").value!! as String} Year ${it.child("year").value as String}",
+                                    it.child("email").value!! as String))
+                            taskList.add(mStorage.child("${it.child("username").value as String}.${it.child("ext").value as String}").downloadUrl)
+                        }
+
+                        Tasks.whenAllComplete(taskList)
+                                .addOnSuccessListener {
+                                    val failedList = arrayListOf<Int>()
+                                    it.forEachIndexed { i, task ->
+                                        if (task.isSuccessful)
+                                            partners[i].imageUri = task.result as Uri
+                                        else
+                                            failedList.add(i)
+                                    }
+                                    partners = partners.filterIndexed { index, partner ->
+                                        failedList.indexOf(index) < 0 && partner.imageUri != null
+                                    } as ArrayList<Partner>
+                                    adapter.clear()
+                                    adapter.addAll(partners)
+                                    view!!.findViewById<ProgressBar>(R.id.progress_bar).visibility = View.GONE
+                                }
                     }
                 })
     }
+
+    override fun onCardDragging(percentX: Float, percentY: Float) {}
+
+    override fun onCardSwiped(direction: SwipeDirection?) {
+        if (adapter.count > 0) {
+            val partner = adapter.getItem(0)
+            val map = HashMap<String, Any>()
+            val category = when (direction) {
+                SwipeDirection.Left -> "skip"
+                SwipeDirection.Right -> "like"
+                SwipeDirection.Top -> "super"
+                SwipeDirection.Bottom -> ""
+                else -> ""
+            }
+            if (category.isNotEmpty()) {
+                map["$category/${allUser[partner.email]}"] = true
+                mDatabase.updateChildren(map)
+            }
+        }
+    }
+
+    override fun onCardReversed() {}
+
+    override fun onCardMovedToOrigin() {}
+
+    override fun onCardClicked(index: Int) {}
 
     companion object {
         /**
