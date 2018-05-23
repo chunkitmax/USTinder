@@ -95,6 +95,7 @@ class AboutActivity : AppCompatActivity() {
             Toast.makeText(this, "Enter your year of study!", Toast.LENGTH_SHORT).show()
             return false
         }
+        major.setText(major.text.toString().toUpperCase())
         if (major.text.isNullOrEmpty()) {
             Toast.makeText(this, "Enter your major!", Toast.LENGTH_SHORT).show()
             return false
