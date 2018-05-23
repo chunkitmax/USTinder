@@ -93,7 +93,7 @@ class HomeFragment : Fragment(), FirebaseAuth.AuthStateListener {
                                 if (child.child("email").value as String != currentEmail) {
                                     partners.add(Partner(child.child("prefer").value!! as String,
                                             "${child.child("major").value!! as String} Year ${child.child("year").value as String}"))
-                                    taskList.add(storgeRef.child("${child.child("username").value as String}.gif").downloadUrl)
+                                    taskList.add(storgeRef.child("${child.child("username").value as String}.${child.child("ext").value as String}").downloadUrl)
                                 }
                             }
                             Tasks.whenAllComplete(taskList)

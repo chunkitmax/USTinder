@@ -19,7 +19,7 @@ import com.google.firebase.storage.StorageReference
 import com.jaeger.library.StatusBarUtil
 import jp.wasabeef.blurry.Blurry
 
-class ProfileActivity : AppCompatActivity(), ValueEventListener {
+class ProfileActivity : AppCompatActivity(), ValueEventListener, FirebaseAuth.AuthStateListener {
 
     private var REQUEST_CODE: Int = -1
 
@@ -68,20 +68,19 @@ class ProfileActivity : AppCompatActivity(), ValueEventListener {
         lp.setMargins(lp.leftMargin, lp.topMargin+resources.getDimensionPixelSize(resId), lp.rightMargin, lp.bottomMargin)
         toolbar.layoutParams = lp
 
-        FirebaseAuth.getInstance()!!.signInWithEmailAndPassword("tcngaa@connect.ust.hk", "123456")
-                .addOnCompleteListener { task ->
-                    run {
-                        if (task.isSuccessful) {
-                            mDatabase = FirebaseDatabase.getInstance().reference
-                            mStorage = FirebaseStorage.getInstance().reference
+        FirebaseAuth.getInstance()!!.addAuthStateListener(this)
+    }
+    override fun onAuthStateChanged(it: FirebaseAuth) {
+        if (it.currentUser!!.displayName.isNullOrEmpty()) {
+            finishWithStatus("Please logged in again.")
+        } else {
+            mDatabase = FirebaseDatabase.getInstance().reference
+            mStorage = FirebaseStorage.getInstance().reference
 
-                            userId = task.result.user.uid
-                            getUserInfo()
-                        } else {
-                            finishWithStatus("Firebase authentication failed")
-                        }
-                    }
-                }
+            userId = it.currentUser!!.uid
+            getUserInfo()
+        }
+        it.removeAuthStateListener(this)
     }
 
     private fun getUserInfo() {
