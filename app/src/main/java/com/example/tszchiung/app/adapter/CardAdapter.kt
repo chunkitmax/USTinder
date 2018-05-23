@@ -52,7 +52,9 @@ class CardAdapter(context: Context) : ArrayAdapter<Partner>(context, 0) {
         var p: Partner = getItem(position)
         holder.name.text = p.name
         holder.info.text = p.info
-        Glide.with(context).load(p.imageUri).into(holder.image)
+        try {
+            Glide.with(context).load(p.imageUri).into(holder.image)
+        } catch(e: IllegalArgumentException) {}
 
         return contentView!!
     }

@@ -1,22 +1,22 @@
 package com.example.tszchiung.app
 
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.Toast
 import com.example.tszchiung.app.adapter.CardAdapter
 import com.example.tszchiung.app.adapter.Partner
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.yuyakaido.android.cardstackview.CardStackView
@@ -35,24 +35,17 @@ private const val JUST_LOGIN = "justLogin"
  * create an instance of this fragment.
  *
  */
-class HomeFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var justLogin: Boolean? = null
-    private var listener: OnFragmentInteractionListener? = null
+class HomeFragment : Fragment(), FirebaseAuth.AuthStateListener {
+
     private lateinit var cardView: CardStackView
 
     private lateinit var adapter: CardAdapter
     private lateinit var progressBar: ProgressBar
 
-
-    private var mStorage: StorageReference? = null
+    private lateinit var mStorage: StorageReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            justLogin = it.getBoolean(JUST_LOGIN)
-        }
-        mStorage = FirebaseStorage.getInstance().reference
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -68,61 +61,29 @@ class HomeFragment : Fragment() {
 
         progressBar = view.findViewById(R.id.progress_bar)
 
-        FirebaseAuth.getInstance()!!.signInWithEmailAndPassword("cklauah@connect.ust.hk", "123456")
-                .addOnCompleteListener { task ->
-                    run {
-                        try {
-                            if (task.isSuccessful) {
-                                getPartners(task.result!!.user.email!!)
-                            }
-                        } catch (e: AssertionError) {
-                            // Authentication failed
-                        }
-                    }
-                }
-
-//        // TODO: use this if user has logged in
-//        FirebaseAuth.getInstance()!!.addAuthStateListener { firebaseAuth ->
-//            try {
-//                getPartners(firebaseAuth.currentUser!!.email!!)
-//            } catch (e: AssertionError){
-//                // TODO: jump back to login page
-//            }
-//        }
+        FirebaseAuth.getInstance()!!.addAuthStateListener(this)
 
         return view
     }
 
-//    fun getPartners(): List<Partner> {
-//        var partners = ArrayList<Partner>()
-//        var pictureList = arrayListOf("chris.png", "girl.png")
-//        var nameList = arrayListOf("Mary Lau", "Selena Yip")
-//        var infoList = arrayListOf("IELM Year 3", "GBUS Year 3")
-//        var taskList = ArrayList<Task<Uri>>()
-//        pictureList.forEachIndexed { _, s ->
-//            run {
-//                taskList.add(mStorage!!.child(s).downloadUrl)
-//            }
-//        }
-//        val allSuccessTask = Tasks.whenAllSuccess<Uri>(taskList)
-//        allSuccessTask.addOnSuccessListener {
-//            it.forEachIndexed { i, uri ->
-//                adapter!!.add(Partner(nameList[i], infoList[i], uri))
-//            }
-//            progressBar.visibility = View.GONE
-//        }
-////        partners.add(Partner("Christy Lam", "FINA Year3"))
-////        partners.add(Partner("Cindy Wong", "ECON Year3"))
-//        return partners
-//    }
+    override fun onAuthStateChanged(it: FirebaseAuth) {
+        val user = it.currentUser
+        if (user != null) {
+            mStorage = FirebaseStorage.getInstance().reference
+            getPartners(it.currentUser!!.email!!)
+        } else {
+            Toast.makeText(this@HomeFragment.context, "Please log in.", Toast.LENGTH_SHORT).show()
+            activity!!.finish()
+        }
+        it.removeAuthStateListener(this)
+    }
+
     fun getPartners(currentEmail: String) {
         FirebaseDatabase.getInstance()!!.reference.child("users")
                 .orderByChild("gender")
                 .equalTo("M") // TODO: should be according to user's preference
                 .addValueEventListener(object: ValueEventListener {
-                    override fun onCancelled(error: DatabaseError?) {
-                        TODO("not implemented")
-                    }
+                    override fun onCancelled(error: DatabaseError?) {}
                     override fun onDataChange(snapshot: DataSnapshot?) {
                         if (snapshot != null) {
                             var partners = ArrayList<Partner>()
@@ -157,38 +118,6 @@ class HomeFragment : Fragment() {
                 })
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        /**
-         * No interaction between HomeActivity and HomeFragment so far
-         */
-//        if (context is OnFragmentInteractionListener) {
-//            listener = context
-//        } else {
-//            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
-//        }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
-    interface OnFragmentInteractionListener {
-        fun onFragmentInteraction(uri: Uri)
-    }
-
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -198,13 +127,8 @@ class HomeFragment : Fragment() {
          * @param param2 Parameter 2.
          * @return A new instance of fragment HomeFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(justLogin: Boolean) =
-            HomeFragment().apply {
-                arguments = Bundle().apply {
-                    putBoolean(JUST_LOGIN, justLogin)
-                }
-            }
+        fun newInstance() =
+            HomeFragment().apply {}
     }
 }

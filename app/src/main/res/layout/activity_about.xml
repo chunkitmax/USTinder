@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:theme="@style/AppTheme"
+    tools:context=".AboutActivity">
+
+    <ImageView
+        android:id="@+id/bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/friendship"
+        android:paddingEnd="150dp"
+        android:scaleType="centerCrop" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="20dp"
+        android:gravity="center"
+        android:weightSum="10"
+        android:paddingTop="0dp"
+        android:orientation="vertical">
+        
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:text="ABOUT YOU"
+            android:fontFamily="@font/norwester"
+            android:textColor="@android:color/white"
+            android:textAlignment="center"
+            android:layout_weight="1"
+            android:layout_margin="30dp"
+            android:textSize="30sp"/>
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:weightSum="2">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:theme="@style/WhiteTextInput"
+                android:layout_weight="1"
+                android:hint="First name"
+                android:paddingEnd="30dp"
+                android:textColorHint="@android:color/white">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/first_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:fontFamily="@font/grandhotel_regular"
+                    android:textSize="20sp"
+                    android:inputType="text" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:theme="@style/WhiteTextInput"
+                android:layout_weight="1"
+                android:hint="Last name"
+                android:paddingStart="30dp"
+                android:textColorHint="@android:color/white">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/last_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:fontFamily="@font/grandhotel_regular"
+                    android:textSize="20sp"
+                    android:inputType="text" />
+
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:weightSum="2">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:theme="@style/WhiteTextInput"
+                android:layout_weight="1"
+                android:hint="Prefered name"
+                android:paddingEnd="30dp"
+                android:textColorHint="@android:color/white">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/prefered_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:fontFamily="@font/grandhotel_regular"
+                    android:textSize="20sp"
+                    android:inputType="text" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:theme="@style/WhiteTextInput"
+                android:layout_weight="1"
+                android:hint="Gender"
+                android:paddingStart="30dp"
+                android:textColorHint="@android:color/white">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/gender"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:fontFamily="@font/grandhotel_regular"
+                    android:textSize="20sp"
+                    android:inputType="text" />
+
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:weightSum="2">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:theme="@style/WhiteTextInput"
+                android:layout_weight="1"
+                android:hint="Year of study"
+                android:paddingEnd="30dp"
+                android:textColorHint="@android:color/white">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/year_of_study"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:fontFamily="@font/grandhotel_regular"
+                    android:textSize="20sp"
+                    android:inputType="text" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:theme="@style/WhiteTextInput"
+                android:layout_weight="1"
+                android:hint="Major"
+                android:paddingStart="30dp"
+                android:textColorHint="@android:color/white">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/major"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:fontFamily="@font/grandhotel_regular"
+                    android:textSize="20sp"
+                    android:inputType="text" />
+
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:weightSum="2">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:theme="@style/WhiteTextInput"
+                android:layout_weight="1"
+                android:hint="Nationality"
+                android:paddingEnd="30dp"
+                android:textColorHint="@android:color/white">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/nationality"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:fontFamily="@font/grandhotel_regular"
+                    android:textSize="20sp"
+                    android:inputType="text" />
+
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4"
+            android:weightSum="10"
+            android:paddingTop="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:theme="@style/WhiteTextInput"
+                android:fontFamily="@font/grandhotel_regular"
+                android:textSize="20sp"
+                android:layout_weight="2"
+                android:paddingStart="5dp"
+                android:hint="About me"
+                android:textColorHint="@android:color/white" />
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/about_me"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="8"
+                android:layout_marginBottom="20dp"
+                android:padding="10dp"
+                android:textColor="@android:color/white"
+                android:fontFamily="@font/grandhotel_regular"
+                android:background="@drawable/about_about_me"
+                android:textSize="20sp"
+                android:inputType="textMultiLine" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/confirm"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="bottom"
+            android:fontFamily="@font/norwester"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            style="?android:attr/borderlessButtonStyle"
+            android:background="@drawable/main_btn"
+            android:elevation="0dp"
+            android:layout_weight="1"
+            android:text="Confirm" />
+
+    </LinearLayout>
+
+</FrameLayout>

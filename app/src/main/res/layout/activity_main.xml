@@ -1,22 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:windowSoftInputMode="adjustResize"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/maintext"
-        android:layout_width="186dp"
-        android:layout_height="185dp"
-        android:text="text"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:fontFamily="monospace"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</android.support.constraint.ConstraintLayout>
+    <ImageView
+        android:id="@+id/bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/main_bg"
+        android:paddingEnd="100dp"
+        android:scaleType="centerCrop"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:gravity="center_horizontal"
+        android:padding="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="USTinder."
+            android:fontFamily="@font/grandhotel_regular"
+            android:textAllCaps="false"
+            android:textColor="#E9BDAD"
+            android:textSize="60sp" />
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/WhiteTextInput"
+            android:hint="Username or Email"
+            android:textColorHint="@android:color/white">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/username_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:fontFamily="@font/grandhotel_regular"
+                android:maxLines="1"
+                android:textSize="20sp"
+                android:inputType="text" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/WhiteTextInput"
+            app:passwordToggleEnabled="true"
+            android:hint="Password"
+            app:passwordToggleTint="@android:color/white"
+            android:textColorHint="@android:color/white">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:fontFamily="@font/grandhotel_regular"
+                android:maxLines="1"
+                android:textSize="20sp"
+                android:inputType="textPassword" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:fontFamily="casual"
+            android:layout_gravity="start"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:paddingStart="5dp"
+            android:textSize="10sp"
+            android:text="Forget Password?"
+            android:clickable="true"/>
+
+        <Button
+            android:id="@+id/sign_in"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:fontFamily="@font/norwester"
+            android:textColor="@android:color/white"
+            style="?android:attr/borderlessButtonStyle"
+            android:background="@drawable/main_btn"
+            android:textSize="20sp"
+            android:padding="20dp"
+            android:text="Sign In" />
+
+        <Button
+            android:id="@+id/sign_up"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:fontFamily="@font/norwester"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            style="?android:attr/borderlessButtonStyle"
+            android:background="@drawable/main_btn"
+            android:elevation="0dp"
+            android:padding="20dp"
+            android:text="Sign Up" />
+
+    </LinearLayout>
+
+</FrameLayout>
