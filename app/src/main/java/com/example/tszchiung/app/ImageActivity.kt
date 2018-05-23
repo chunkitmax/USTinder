@@ -11,7 +11,8 @@ import android.webkit.MimeTypeMap
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.jaeger.library.StatusBarUtil
@@ -63,43 +64,33 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun uploadFile() {
         if (fileUri != null) {
-            mDatabase.child("username")
-                    .addListenerForSingleValueEvent(object: ValueEventListener {
-                        override fun onCancelled(error: DatabaseError?) {
-                            finishWithStatus(error!!.message)
+            try {
+                val fileRef = imageReference.child("${mAuth.currentUser!!.displayName}.${getFileExtension(fileUri!!)}")
+                progress_bar.progress = 0
+                progress_bar.visibility = View.VISIBLE
+                fileRef.putFile(fileUri!!)
+                        .addOnSuccessListener {
+                            val childUpdates = HashMap<String, Any>()
+                            childUpdates["ext"] = getFileExtension(fileUri!!)
+                            mDatabase.updateChildren(childUpdates)
+                                    .addOnCompleteListener {
+                                        if (it.isSuccessful) {
+                                            finishWithStatus(true)
+                                        } else {
+                                            finishWithStatus(it.exception!!.message!!)
+                                        }
+                                    }
                         }
-                        override fun onDataChange(snapshot: DataSnapshot?) {
-                            try {
-                                val fileRef = imageReference.child("${snapshot!!.value as String}.${getFileExtension(fileUri!!)}")
-                                progress_bar.progress = 0
-                                progress_bar.visibility = View.VISIBLE
-                                fileRef.putFile(fileUri!!)
-                                        .addOnSuccessListener {
-                                            val childUpdates = HashMap<String, Any>()
-                                            childUpdates["ext"] = getFileExtension(fileUri!!)
-                                            mDatabase.updateChildren(childUpdates)
-                                                    .addOnCompleteListener {
-                                                        if (it.isSuccessful) {
-                                                            finishWithStatus(true)
-                                                        } else {
-                                                            finishWithStatus(it.exception!!.message!!)
-                                                        }
-                                                    }
-                                        }
-                                        .addOnFailureListener { exception ->
-                                            Toast.makeText(this@ImageActivity, exception.message, Toast.LENGTH_LONG).show()
-                                        }
-                                        .addOnProgressListener { taskSnapshot ->
-                                            progress_bar.progress = (100.0 * taskSnapshot.bytesTransferred / progress_bar.max).toInt()
-                                        }
-                                        .addOnPausedListener { System.out.println("Upload is paused!") }
-                                intent
-                            } catch (e: Exception) {
-                                finishWithStatus(e.message!!)
-                            }
+                        .addOnFailureListener { exception ->
+                            Toast.makeText(this@ImageActivity, exception.message, Toast.LENGTH_LONG).show()
                         }
-                    })
-
+                        .addOnProgressListener { taskSnapshot ->
+                            progress_bar.progress = (100.0 * taskSnapshot.bytesTransferred / progress_bar.max).toInt()
+                        }
+                        .addOnPausedListener { System.out.println("Upload is paused!") }
+            } catch (e: Exception) {
+                finishWithStatus(e.message!!)
+            }
         } else {
             Toast.makeText(this, "No File chosen!", Toast.LENGTH_LONG).show()
         }

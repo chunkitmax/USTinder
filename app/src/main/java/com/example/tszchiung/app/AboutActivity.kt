@@ -38,7 +38,7 @@ class AboutActivity : AppCompatActivity() {
                         val userDbRef = FirebaseDatabase.getInstance().reference
                                 .child("users")
                                 .child(user.uid)
-                        userDbRef.addValueEventListener(object: ValueEventListener {
+                        userDbRef.addListenerForSingleValueEvent(object: ValueEventListener {
                             override fun onCancelled(error: DatabaseError?) {
                                 Toast.makeText(this@AboutActivity, error!!.message, Toast.LENGTH_SHORT).show()
                             }
@@ -108,6 +108,18 @@ class AboutActivity : AppCompatActivity() {
             return false
         }
         return true
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            IMAGE_REQUEST_CODE -> run {
+                when {
+                    resultCode == 1 -> finishWithStatus(true)
+                    data != null -> finishWithStatus(data.extras.getString("reason"))
+                    else -> finishWithStatus(false)
+                }
+            }
+        }
     }
 
     fun finishWithStatus(reason: String) {

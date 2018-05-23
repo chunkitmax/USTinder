@@ -9,6 +9,7 @@ import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AppCompatActivity
 import android.widget.ImageButton
 import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
 
 class HomeActivity : AppCompatActivity() {
 
@@ -41,7 +42,10 @@ class HomeActivity : AppCompatActivity() {
                         startActivityForResult(intent, PROFILE_REQUEST_CODE)
                     }
                 R.id.community -> startReplaceTransaction(CommunityFragment.newInstance("Peter", "wahaha"))
-                R.id.log_out -> finish()
+                R.id.log_out -> {
+                    FirebaseAuth.getInstance()!!.signOut()
+                    finish()
+                }
             }
             // close drawer when item is tapped
             mDrawerLayout.closeDrawers()
@@ -57,7 +61,7 @@ class HomeActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
             PROFILE_REQUEST_CODE -> {
-                if (resultCode as Boolean && data != null) {
+                if (resultCode == 1 && data != null) {
                     Toast.makeText(this, data.getStringExtra("reason"), Toast.LENGTH_LONG).show()
                 }
                 // may update database here or update in profile activity

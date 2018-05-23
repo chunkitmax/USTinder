@@ -88,7 +88,16 @@ class ProfileActivity : AppCompatActivity(), ValueEventListener {
         mDatabase!!
                 .child("users")
                 .child(userId)
-                .addValueEventListener(this)
+                .addListenerForSingleValueEvent(this)
+    }
+
+    override fun onBackPressed() {
+        moveTaskToBack(true)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finishWithStatus(true)
+        return true
     }
 
     override fun onCancelled(error: DatabaseError?) {

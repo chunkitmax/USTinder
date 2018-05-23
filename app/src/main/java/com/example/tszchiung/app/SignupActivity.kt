@@ -8,9 +8,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.example.tszchiung.app.model.User
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
 import com.jaeger.library.StatusBarUtil
 import kotlinx.android.synthetic.main.activity_signup.*
+
 
 class SignupActivity : AppCompatActivity() {
 
@@ -54,7 +56,17 @@ class SignupActivity : AppCompatActivity() {
                                 .child("users")
                                 .child(user!!.uid)
                                 .setValue(userObj)
-                        startActivityForResult(Intent(this, VerificationActivity::class.java), VERIFICATION_REQUEST_CODE)
+                        val profileUpdates = UserProfileChangeRequest.Builder()
+                                .setDisplayName(username.text.toString())
+                                .build()
+                        task.result.user.updateProfile(profileUpdates)
+                                .addOnCompleteListener {
+                                    if (task.isSuccessful) {
+                                        startActivityForResult(Intent(this, VerificationActivity::class.java), VERIFICATION_REQUEST_CODE)
+                                    } else {
+                                        finishWithStatus(task.exception!!.message!!)
+                                    }
+                                }
                     } else {
                         Toast.makeText(this, task.exception!!.message, Toast.LENGTH_SHORT).show()
                     }

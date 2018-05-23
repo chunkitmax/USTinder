@@ -35,7 +35,7 @@ private const val JUST_LOGIN = "justLogin"
  * create an instance of this fragment.
  *
  */
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), FirebaseAuth.AuthStateListener {
 
     private lateinit var cardView: CardStackView
 
@@ -61,18 +61,21 @@ class HomeFragment : Fragment() {
 
         progressBar = view.findViewById(R.id.progress_bar)
 
-        FirebaseAuth.getInstance()!!.addAuthStateListener {
-            val user = it.currentUser
-            if (user != null) {
-                mStorage = FirebaseStorage.getInstance().reference
-                getPartners(it.currentUser!!.email!!)
-            } else {
-                Toast.makeText(this@HomeFragment.context, "Please log in.", Toast.LENGTH_SHORT).show()
-                activity!!.finish()
-            }
-        }
+        FirebaseAuth.getInstance()!!.addAuthStateListener(this)
 
         return view
+    }
+
+    override fun onAuthStateChanged(it: FirebaseAuth) {
+        val user = it.currentUser
+        if (user != null) {
+            mStorage = FirebaseStorage.getInstance().reference
+            getPartners(it.currentUser!!.email!!)
+        } else {
+            Toast.makeText(this@HomeFragment.context, "Please log in.", Toast.LENGTH_SHORT).show()
+            activity!!.finish()
+        }
+        it.removeAuthStateListener(this)
     }
 
     fun getPartners(currentEmail: String) {
@@ -80,9 +83,7 @@ class HomeFragment : Fragment() {
                 .orderByChild("gender")
                 .equalTo("M") // TODO: should be according to user's preference
                 .addValueEventListener(object: ValueEventListener {
-                    override fun onCancelled(error: DatabaseError?) {
-                        TODO("not implemented")
-                    }
+                    override fun onCancelled(error: DatabaseError?) {}
                     override fun onDataChange(snapshot: DataSnapshot?) {
                         if (snapshot != null) {
                             var partners = ArrayList<Partner>()

@@ -44,9 +44,10 @@ class VerificationActivity : AppCompatActivity() {
                 if (currentUser!!.isEmailVerified) {
 //                    finishWithStatus(true)
                     startActivityForResult(Intent(this, AboutActivity::class.java), ABOUT_REQUEST_CODE)
+                } else {
+                    checkTimer.postDelayed(checking, 5000)
                 }
             }
-            checkTimer.postDelayed(checking, 5000)
         }
 
         val restartTimer = Runnable {

@@ -3,7 +3,6 @@ package com.example.tszchiung.app
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.text.TextUtils
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -75,12 +74,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, FirebaseAuth.Aut
     }
 
     private fun signIn() {
+        if (!validateForm()) {
+            return
+        }
         var email = username_email.text.toString()
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             email += "@connect.ust.hk"
-        }
-        if (!validateForm(username_email.text.toString(), password.text.toString())) {
-            return
         }
         mAuth.signInWithEmailAndPassword(email, password.text.toString())
                 .addOnCompleteListener(this) { task ->
@@ -114,10 +113,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, FirebaseAuth.Aut
                             password.setText("")
                             startActivityForResult(Intent(this@MainActivity, AboutActivity::class.java), ABOUT_REQUEST_CODE)
                         } else {
-                            mStorage.child("images").child(mAuth.currentUser!!.uid)
+                            mStorage.child("images").child("${info.username}.${info.ext}")
                                     .downloadUrl
                                     .addOnCompleteListener {
                                         if (it.isSuccessful) {
+                                            username_email.setText("")
+                                            password.setText("")
                                             startActivity(Intent(this@MainActivity, HomeActivity::class.java))
                                         } else {
                                             startActivityForResult(Intent(this@MainActivity, ImageActivity::class.java), IMAGE_REQUEST_CODE)
@@ -128,19 +129,20 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, FirebaseAuth.Aut
                 })
     }
 
-    private fun validateForm(email: String, password: String): Boolean {
+    private fun validateForm(): Boolean {
 
-        if (TextUtils.isEmpty(email)) {
+        username_email.setText(username_email.text.toString().trim())
+        if (username_email.text.isNullOrEmpty()) {
             Toast.makeText(this, "Enter email address!", Toast.LENGTH_SHORT).show()
             return false
         }
 
-        if (TextUtils.isEmpty(password)) {
+        if (password.text.isNullOrEmpty()) {
             Toast.makeText(this, "Enter password!", Toast.LENGTH_SHORT).show()
             return false
         }
 
-        if (password.length < 6) {
+        if (password.text.toString().length < 6) {
             Toast.makeText(this, "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show()
             return false
         }
