@@ -10,6 +10,7 @@
         android:layout_height="match_parent"
         android:gravity="center_vertical"
         android:orientation="vertical"
+        android:paddingTop="20dp"
         android:paddingStart="20dp">
 
         <TextView

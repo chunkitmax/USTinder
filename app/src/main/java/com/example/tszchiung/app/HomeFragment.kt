@@ -1,15 +1,18 @@
 package com.example.tszchiung.app
 
+import android.graphics.Point
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.Toast
 import com.example.tszchiung.app.adapter.CardAdapter
 import com.example.tszchiung.app.adapter.Partner
+import com.example.tszchiung.app.model.Info
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
@@ -18,6 +21,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.yuyakaido.android.cardstackview.CardStackView
 import com.yuyakaido.android.cardstackview.SwipeDirection
+import kotlinx.android.synthetic.main.fragment_home.*
 
 
 /**
@@ -29,14 +33,17 @@ import com.yuyakaido.android.cardstackview.SwipeDirection
  * create an instance of this fragment.
  *
  */
-class HomeFragment : Fragment(), FirebaseAuth.AuthStateListener, CardStackView.CardEventListener {
+class HomeFragment : Fragment(), FirebaseAuth.AuthStateListener, CardStackView.CardEventListener, View.OnClickListener {
 
     private lateinit var adapter: CardAdapter
     private lateinit var mAuth: FirebaseAuth
     private lateinit var mStorage: StorageReference
     private lateinit var mDatabase: DatabaseReference
 
-    private var allUser = HashMap<String, String>()
+    private lateinit var curUserObj: Info
+    private lateinit var mView: View
+
+    private var email2uid = HashMap<String, String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,12 +53,17 @@ class HomeFragment : Fragment(), FirebaseAuth.AuthStateListener, CardStackView.C
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home, container, false)
+        mView = view
 //        view.findViewById<TextView>(R.id.greeting).text =
 //                String.format("This is Home with justLogin=%b", justLogin)
         adapter = CardAdapter(context!!)
         val cardView = view.findViewById<CardStackView>(R.id.card_view)
         cardView.setAdapter(adapter)
         cardView.visibility = View.VISIBLE
+
+        view.findViewById<ImageButton>(R.id.skip).setOnClickListener(this)
+        view.findViewById<ImageButton>(R.id.like).setOnClickListener(this)
+        view.findViewById<ImageButton>(R.id.superlike).setOnClickListener(this)
 
         FirebaseAuth.getInstance()!!.addAuthStateListener(this)
 
@@ -65,7 +77,7 @@ class HomeFragment : Fragment(), FirebaseAuth.AuthStateListener, CardStackView.C
         if (user != null) {
             mAuth = it
             mStorage = FirebaseStorage.getInstance().reference.child("images")
-            mDatabase = FirebaseDatabase.getInstance().reference.child("users").child(user.uid)
+            mDatabase = FirebaseDatabase.getInstance().reference.child("users")
             getPartners(it.currentUser!!.email!!)
         } else {
             Toast.makeText(this@HomeFragment.context, "Please log in.", Toast.LENGTH_SHORT).show()
@@ -84,7 +96,8 @@ class HomeFragment : Fragment(), FirebaseAuth.AuthStateListener, CardStackView.C
                         val userObj = snapshot!!.children.filter {
                             it.key == mAuth.currentUser!!.uid
                         }[0]
-                        val targetMajor = userObj.child("major").value as String
+                        curUserObj = userObj.getValue(Info::class.java)!!
+                        val targetMajor = userObj.child("major").value!! as String
                         val ratedUserList = ArrayList<String>()
                         listOf("skip", "like", "super").forEach {
                             if (userObj.hasChild(it)) {
@@ -92,14 +105,14 @@ class HomeFragment : Fragment(), FirebaseAuth.AuthStateListener, CardStackView.C
                             }
                         }
                         val ratedUserSet = ratedUserList.toSet()
-                        allUser.clear()
+                        email2uid.clear()
                         snapshot.children.filter {
                             ratedUserSet.indexOf(it.key) < 0 &&
                                     it.hasChild("major") &&
                                     it.child("major").value!! as String == targetMajor &&
                                     it.key != mAuth.currentUser!!.uid
                         }.forEach {
-                            allUser[it.child("email").value as String] = it.key
+                            email2uid[it.child("email").value as String] = it.key
                             partners.add(Partner(it.child("prefer").value!! as String,
                                     "${it.child("major").value!! as String} Year ${it.child("year").value as String}",
                                     it.child("email").value!! as String))
@@ -120,10 +133,18 @@ class HomeFragment : Fragment(), FirebaseAuth.AuthStateListener, CardStackView.C
                                     } as ArrayList<Partner>
                                     adapter.clear()
                                     adapter.addAll(partners)
-                                    view!!.findViewById<ProgressBar>(R.id.progress_bar).visibility = View.GONE
+                                    mView.findViewById<ProgressBar>(R.id.progress_bar).visibility = View.GONE
                                 }
                     }
                 })
+    }
+
+    override fun onClick(v: View?) {
+        when (v!!.id) {
+            R.id.skip -> card_view.swipe(Point(0, 0), SwipeDirection.Left)
+            R.id.like -> card_view.swipe(Point(0, 0), SwipeDirection.Right)
+            R.id.superlike -> card_view.swipe(Point(0, 0), SwipeDirection.Top)
+        }
     }
 
     override fun onCardDragging(percentX: Float, percentY: Float) {}
@@ -140,8 +161,29 @@ class HomeFragment : Fragment(), FirebaseAuth.AuthStateListener, CardStackView.C
                 else -> ""
             }
             if (category.isNotEmpty()) {
-                map["$category/${allUser[partner.email]}"] = true
-                mDatabase.updateChildren(map)
+                map["$category/${email2uid[partner.email]}"] = true
+                mDatabase.child(mAuth.uid!!).updateChildren(map)
+            }
+            if (category == "like" || category == "super") {
+                mDatabase.child(email2uid[partner.email])
+                        .addListenerForSingleValueEvent(object: ValueEventListener {
+                            override fun onCancelled(error: DatabaseError?) {}
+                            override fun onDataChange(snapshot: DataSnapshot?) {
+                                if (snapshot!!.child("like/${mAuth.uid!!}").exists() ||
+                                                snapshot.child("super/${mAuth.uid!!}").exists()) {
+                                    mStorage.child("${curUserObj.username}.${curUserObj.ext}")
+                                            .downloadUrl
+                                            .addOnCompleteListener {
+                                                if (it.isSuccessful) {
+                                                    (activity as HomeActivity).showMatchDialog(listOf(it.result, partner.imageUri!!))
+                                                } else {
+                                                    Toast.makeText(activity, "Cannot get profile picture of current user",
+                                                            Toast.LENGTH_SHORT).show()
+                                                }
+                                            }
+                                }
+                            }
+                        })
             }
         }
     }
@@ -153,14 +195,6 @@ class HomeFragment : Fragment(), FirebaseAuth.AuthStateListener, CardStackView.C
     override fun onCardClicked(index: Int) {}
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HomeFragment.
-         */
         @JvmStatic
         fun newInstance() =
             HomeFragment().apply {}
