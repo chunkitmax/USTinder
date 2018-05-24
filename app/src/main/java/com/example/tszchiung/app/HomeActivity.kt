@@ -42,9 +42,9 @@ class HomeActivity : AppCompatActivity() {
                 R.id.profile ->
                     run {
                         val intent = Intent(this, ProfileActivity::class.java)
-                        intent.putExtra("username", "tcngaa")
                         startActivityForResult(intent, PROFILE_REQUEST_CODE)
                     }
+                R.id.message -> startReplaceTransaction(MessageFragment.newInstance())
 //                R.id.community -> startReplaceTransaction(CommunityFragment.newInstance("Peter", "wahaha"))
                 R.id.log_out -> {
                     FirebaseAuth.getInstance()!!.signOut()
@@ -89,8 +89,7 @@ class HomeActivity : AppCompatActivity() {
                 return picUri
             }
             override fun fragmentTransaction() {
-                TODO("Message fragment")
-//                startReplaceTransaction()
+                startReplaceTransaction(MessageFragment.newInstance())
             }
         })
 //        val lp = dialog.window.attributes
