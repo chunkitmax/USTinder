@@ -89,8 +89,7 @@ class HomeActivity : AppCompatActivity() {
                 return picUri
             }
             override fun fragmentTransaction() {
-                TODO("Message fragment")
-//                startReplaceTransaction()
+                startReplaceTransaction(MessageFragment.newInstance())
             }
         })
 //        val lp = dialog.window.attributes
