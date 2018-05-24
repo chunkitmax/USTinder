@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.FirebaseDatabase
 import com.jaeger.library.StatusBarUtil
 import kotlinx.android.synthetic.main.activity_verification.*
 
@@ -17,7 +18,7 @@ class VerificationActivity : AppCompatActivity() {
 
     var checkTimer = Handler()
     lateinit var checking: Runnable
-    var currentUser: FirebaseUser? = null
+    lateinit var currentUser: FirebaseUser
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,8 +39,8 @@ class VerificationActivity : AppCompatActivity() {
         toolbar.layoutParams = lp
 
         checking = Runnable {
-            currentUser!!.reload().addOnCompleteListener {
-                if (currentUser!!.isEmailVerified) {
+            currentUser.reload().addOnCompleteListener {
+                if (currentUser.isEmailVerified) {
 //                    finishWithStatus(true)
                     startActivityForResult(Intent(this, AboutActivity::class.java), ABOUT_REQUEST_CODE)
                 } else {
@@ -54,16 +55,24 @@ class VerificationActivity : AppCompatActivity() {
         }
 
         FirebaseAuth.getInstance().addAuthStateListener {
-            currentUser = it.currentUser
-            if (currentUser != null) {
+            if (it.currentUser != null) {
+                currentUser = it.currentUser!!
                 sendVerificationEmail(restartTimer)
-            } else {
-                finishWithStatus(false,"Cannot get current user!")
-            }
-        }
 
-        send_again.setOnClickListener {
-            sendVerificationEmail(restartTimer)
+                send_again.setOnClickListener {
+                    sendVerificationEmail(restartTimer)
+                }
+
+                cancel.setOnClickListener {
+                    FirebaseDatabase.getInstance()!!.reference.child("users").child(currentUser!!.uid)
+                            .removeValue()
+                    currentUser.delete().addOnCompleteListener {
+                        finishWithStatus("Account deleted!")
+                    }
+                }
+            } else {
+                finishWithStatus("Cannot get current user!")
+            }
         }
     }
 

@@ -50,6 +50,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, FirebaseAuth.Aut
         if (it.currentUser != null) {
             // Logged in before
             checkAccountAndGo()
+        } else {
+            loading.visibility = View.GONE
         }
         mAuth.removeAuthStateListener(this)
     }
@@ -58,7 +60,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, FirebaseAuth.Aut
         if (resultCode == 1) {
             startActivity(Intent(this, HomeActivity::class.java))
         } else {
-            Toast.makeText(this, data!!.extras.getString("reason"), Toast.LENGTH_SHORT).show()
+            val reason = data!!.extras.getString("reason")
+            if (reason != null)
+                Toast.makeText(this, reason, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -119,6 +123,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, FirebaseAuth.Aut
                                         if (it.isSuccessful) {
                                             username_email.setText("")
                                             password.setText("")
+                                            loading.visibility = View.GONE
                                             startActivity(Intent(this@MainActivity, HomeActivity::class.java))
                                         } else {
                                             startActivityForResult(Intent(this@MainActivity, ImageActivity::class.java), IMAGE_REQUEST_CODE)
