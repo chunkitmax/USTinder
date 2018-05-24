@@ -89,10 +89,10 @@ class VerificationActivity : AppCompatActivity() {
     }
 
     private fun sendVerificationEmail(onSuccessRunnable: Runnable) {
-        currentUser!!.sendEmailVerification()
+        currentUser.sendEmailVerification()
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        Toast.makeText(this, "Verification email sent to " + currentUser!!.email!!, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Verification email sent to " + currentUser.email!!, Toast.LENGTH_SHORT).show()
                         onSuccessRunnable.run()
                     } else {
                         Toast.makeText(this, "Failed to send verification email.", Toast.LENGTH_SHORT).show()

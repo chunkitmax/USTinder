@@ -152,7 +152,6 @@ class HomeFragment : Fragment(), FirebaseAuth.AuthStateListener, CardStackView.C
     override fun onCardSwiped(direction: SwipeDirection?) {
         if (adapter.count > 0) {
             val partner = adapter.getItem(0)
-            val map = HashMap<String, Any>()
             val category = when (direction) {
                 SwipeDirection.Left -> "skip"
                 SwipeDirection.Right -> "like"
@@ -160,12 +159,14 @@ class HomeFragment : Fragment(), FirebaseAuth.AuthStateListener, CardStackView.C
                 SwipeDirection.Bottom -> ""
                 else -> ""
             }
+            val targetUid = email2uid[partner.email]!!
             if (category.isNotEmpty()) {
-                map["$category/${email2uid[partner.email]}"] = true
+                val map = HashMap<String, Any>()
+                map["$category/${targetUid}"] = true
                 mDatabase.child(mAuth.uid!!).updateChildren(map)
             }
             if (category == "like" || category == "super") {
-                mDatabase.child(email2uid[partner.email])
+                mDatabase.child(targetUid)
                         .addListenerForSingleValueEvent(object: ValueEventListener {
                             override fun onCancelled(error: DatabaseError?) {}
                             override fun onDataChange(snapshot: DataSnapshot?) {
@@ -175,6 +176,12 @@ class HomeFragment : Fragment(), FirebaseAuth.AuthStateListener, CardStackView.C
                                             .downloadUrl
                                             .addOnCompleteListener {
                                                 if (it.isSuccessful) {
+                                                    var map = HashMap<String, Any>()
+                                                    map["friends/${targetUid}"] = true
+                                                    mDatabase.child(mAuth.uid!!).updateChildren(map)
+                                                    map = HashMap()
+                                                    map["friends/${mAuth.uid!!}"] = true
+                                                    mDatabase.child(targetUid).updateChildren(map)
                                                     (activity as HomeActivity).showMatchDialog(listOf(it.result, partner.imageUri!!))
                                                 } else {
                                                     Toast.makeText(activity, "Cannot get profile picture of current user",

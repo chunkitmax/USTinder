@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:id="@+id/partner"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="start"
+        android:paddingEnd="50dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/partner_msg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/norwester"
+            android:textSize="20sp"
+            android:textColor="@android:color/black"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/me"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="end"
+        android:paddingStart="50dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/my_msg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/norwester"
+            android:textSize="20sp"
+            android:textColor="@android:color/black"/>
+
+    </LinearLayout>
+
+</FrameLayout>
