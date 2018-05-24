@@ -51,5 +51,6 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
     implementation 'com.jaeger.statusbarutil:library:1.5.1'
     implementation 'jp.wasabeef:blurry:2.1.1'
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
 }
 apply plugin: 'com.google.gms.google-services'
