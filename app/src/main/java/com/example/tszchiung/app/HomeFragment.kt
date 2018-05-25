@@ -43,6 +43,8 @@ class HomeFragment : Fragment(), FirebaseAuth.AuthStateListener, CardStackView.C
     private lateinit var curUserObj: Info
     private lateinit var mView: View
 
+    private var listener: ValueEventListener? = null
+
     private var email2uid = HashMap<String, String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,7 +89,7 @@ class HomeFragment : Fragment(), FirebaseAuth.AuthStateListener, CardStackView.C
     }
 
     fun getPartners(currentEmail: String) {
-        FirebaseDatabase.getInstance()!!.reference.child("users")
+        listener = FirebaseDatabase.getInstance()!!.reference.child("users")
                 .addValueEventListener(object: ValueEventListener {
                     override fun onCancelled(error: DatabaseError?) {}
                     override fun onDataChange(snapshot: DataSnapshot?) {
@@ -116,7 +118,7 @@ class HomeFragment : Fragment(), FirebaseAuth.AuthStateListener, CardStackView.C
                             partners.add(Partner(it.child("prefer").value!! as String,
                                     "${it.child("major").value!! as String} Year ${it.child("year").value as String}",
                                     it.child("email").value!! as String))
-                            taskList.add(mStorage.child("${it.child("username").value as String}.${it.child("ext").value as String}").downloadUrl)
+                            taskList.add(mStorage.child("${it.child("username").value!! as String}.${it.child("ext").value!! as String}").downloadUrl)
                         }
 
                         Tasks.whenAllComplete(taskList)
@@ -193,6 +195,11 @@ class HomeFragment : Fragment(), FirebaseAuth.AuthStateListener, CardStackView.C
                         })
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        FirebaseDatabase.getInstance()!!.reference.child("users").removeEventListener(listener)
     }
 
     override fun onCardReversed() {}

@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="20dp">
+    android:layout_height="wrap_content"
+    android:padding="5dp">
 
     <LinearLayout
         android:id="@+id/partner"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="start"
-        android:paddingEnd="50dp"
+        android:layout_alignParentBottom="true"
+        android:paddingEnd="30dp"
+        android:minHeight="50dp"
         android:orientation="horizontal">
 
         <TextView
@@ -18,17 +20,23 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fontFamily="@font/norwester"
+            android:gravity="start|center_vertical"
+            android:textAlignment="gravity"
             android:textSize="20sp"
-            android:textColor="@android:color/black"/>
+            android:padding="10dp"
+            android:textColor="@android:color/black"
+            android:background="@drawable/msg_box" />
 
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/me"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="end"
-        android:paddingStart="50dp"
+        android:layout_alignParentBottom="true"
+        android:paddingStart="30dp"
+        android:minHeight="50dp"
         android:orientation="horizontal">
 
         <TextView
@@ -36,9 +44,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fontFamily="@font/norwester"
+            android:gravity="start|center_vertical"
+            android:textAlignment="gravity"
             android:textSize="20sp"
-            android:textColor="@android:color/black"/>
+            android:padding="10dp"
+            android:textColor="@android:color/black"
+            android:background="@drawable/msg_box" />
 
     </LinearLayout>
 
-</FrameLayout>
+</RelativeLayout>

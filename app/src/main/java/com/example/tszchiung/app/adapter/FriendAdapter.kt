@@ -33,7 +33,13 @@ class FriendViewHolder: RecyclerView.ViewHolder {
     }
 }
 
-class FriendAdapter(val context: Context, private val friends: List<Friend>) : RecyclerView.Adapter<FriendViewHolder>() {
+class FriendAdapter(val context: Context, private val friends: List<Friend>, private val listener: OnItemClickListener)
+    : RecyclerView.Adapter<FriendViewHolder>() {
+
+    interface OnItemClickListener {
+        fun onItemClick(position: Int, friend: Friend)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.friend_list_entry, parent, false)
         return FriendViewHolder(view)
@@ -50,6 +56,7 @@ class FriendAdapter(val context: Context, private val friends: List<Friend>) : R
         } catch (e: Exception) {
             e.printStackTrace()
         }
+        holder.itemView.setOnClickListener { listener.onItemClick(position, friends[position]) }
         return
     }
 }

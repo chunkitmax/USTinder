@@ -22,11 +22,12 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 
 
-class MessageFragment : Fragment() {
+class MessageFragment : Fragment(), FriendAdapter.OnItemClickListener {
 
     private lateinit var adapter: FriendAdapter
 
     lateinit var mView: View
+    private var listener: ValueEventListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +45,7 @@ class MessageFragment : Fragment() {
         FirebaseAuth.getInstance()!!.addAuthStateListener {
             if (it.currentUser != null && it.currentUser!!.uid.isNotEmpty()) {
                 val userRef = FirebaseDatabase.getInstance().reference.child("users")
-                userRef.child(it.currentUser!!.uid).child("friends")
+                listener = userRef.child(it.currentUser!!.uid).child("friends")
                         .addValueEventListener(object: ValueEventListener {
                             override fun onCancelled(error: DatabaseError?) {}
                             override fun onDataChange(snapshot: DataSnapshot?) {
@@ -69,7 +70,7 @@ class MessageFragment : Fragment() {
                                                     mView.findViewById<RecyclerView>(R.id.friend_view).layoutManager =  LinearLayoutManager(context)
                                                     adapter = FriendAdapter(context!!, friendList.filter {
                                                         it.imageUri != null
-                                                    })
+                                                    }, this@MessageFragment)
                                                     mView.findViewById<RecyclerView>(R.id.friend_view).adapter = adapter
                                                     mView.findViewById<RecyclerView>(R.id.friend_view).invalidate()
                                                 }
@@ -86,11 +87,16 @@ class MessageFragment : Fragment() {
         }
         (activity as HomeActivity).findViewById<TextView>(R.id.title).text = "Messages"
 
-//        view.findViewById<RecyclerView>(R.id.friend_view).setOnClickListener {
-//            it.
-//        }
-
         return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        FirebaseDatabase.getInstance().reference.child("users").removeEventListener(listener)
+    }
+
+    override fun onItemClick(position: Int, friend: Friend) {
+        (activity as HomeActivity).startReplaceTransaction(ChatFragment.newInstance(friend.uid, friend.imageUri!!), "Friends", true)
     }
 
     companion object {
