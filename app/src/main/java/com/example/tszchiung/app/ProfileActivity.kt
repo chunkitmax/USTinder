@@ -71,7 +71,7 @@ class ProfileActivity : AppCompatActivity(), ValueEventListener, FirebaseAuth.Au
     }
 
     override fun onBackPressed() {
-        moveTaskToBack(true)
+        finishWithStatus(true)
     }
 
     override fun onSupportNavigateUp(): Boolean {

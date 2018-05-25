@@ -1,12 +1,11 @@
-package com.example.tszchiung.app
+package com.example.tszchiung.app.model
 
-import com.google.firebase.database.IgnoreExtraProperties
 import com.google.firebase.database.Exclude
+import com.google.firebase.database.IgnoreExtraProperties
 
 @IgnoreExtraProperties
 class Message {
 
-    var author: String? = ""
     var body: String? = ""
     var time: String? = ""
 
@@ -14,8 +13,7 @@ class Message {
         // Default constructor
     }
 
-    constructor(author: String, body: String, time: String) {
-        this.author = author
+    constructor(body: String, time: String) {
         this.body = body
         this.time = time
     }
@@ -23,7 +21,6 @@ class Message {
     @Exclude
     fun toMap(): Map<String, Any> {
         val result = HashMap<String, Any>()
-        result.put("author", author!!)
         result.put("body", body!!)
         result.put("time", time!!)
 

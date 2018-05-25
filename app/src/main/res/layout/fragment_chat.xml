@@ -1,14 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     tools:context=".ChatFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/chat_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_above="@id/input_box"/>
 
-</FrameLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_above="@id/input_box"/>
+    
+    <EditText
+        android:id="@+id/input_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:minHeight="55dp"
+        android:hint="Type your message"
+        android:textColorHint="#ccc"
+        android:maxLines="5"
+        android:layout_toStartOf="@+id/send_btn"
+        android:padding="10dp"
+        android:paddingTop="40dp"
+        android:paddingBottom="40dp"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/transparent"/>
+
+    <ImageButton
+        android:id="@+id/send_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="55dp"
+        android:tint="@android:color/darker_gray"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_baseline_send_24px"
+        android:layout_alignTop="@id/input_box"
+        android:layout_alignBottom="@id/input_box"
+        android:layout_alignParentEnd="true"/>
+
+</RelativeLayout>

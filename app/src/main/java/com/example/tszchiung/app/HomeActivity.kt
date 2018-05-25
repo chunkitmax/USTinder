@@ -111,30 +111,22 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun startReplaceTransaction(fragment: Fragment, tagInBackStack: String="") {
+    fun startReplaceTransaction(fragment: Fragment, tagInBackStack: String="", isToAdd: Boolean=false) {
         val ft = supportFragmentManager.beginTransaction()
-        ft.replace(R.id.placeholder, fragment)
-        if (tagInBackStack != "")
+        if (isToAdd)
+            ft.add(R.id.placeholder, fragment)
+        else
+            ft.replace(R.id.placeholder, fragment)
+        if (tagInBackStack.isNotEmpty())
             ft.addToBackStack(tagInBackStack)
         ft.commit()
     }
 
     override fun onBackPressed() {
-        moveTaskToBack(true)
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            supportFragmentManager.popBackStack()
+        } else {
+            moveTaskToBack(true)
+        }
     }
-
-//    override fun onPostCreate(savedInstanceState: Bundle?) {
-//        super.onPostCreate(savedInstanceState)
-//        mDrawerToggle.syncState()
-//    }
-
-
-//    override fun onConfigurationChanged(newConfig: Configuration) {
-//        super.onConfigurationChanged(newConfig)
-//        mDrawerToggle.onConfigurationChanged(newConfig)
-//    }
-
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        return if (mDrawerToggle.onOptionsItemSelected(item)) true else super.onOptionsItemSelected(item)
-//    }
 }
