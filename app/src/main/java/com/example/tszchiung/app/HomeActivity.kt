@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import com.example.tszchiung.app.dialog.MatchDialog
@@ -14,6 +15,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_home.*
 
 class HomeActivity : AppCompatActivity() {
@@ -125,6 +127,8 @@ class HomeActivity : AppCompatActivity() {
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.popBackStack()
+            findViewById<TextView>(R.id.title).text = "Messages"
+            findViewById<CircleImageView>(R.id.profile_pic).visibility = View.GONE
         } else {
             moveTaskToBack(true)
         }

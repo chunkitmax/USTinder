@@ -96,7 +96,7 @@ class MessageFragment : Fragment(), FriendAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(position: Int, friend: Friend) {
-        (activity as HomeActivity).startReplaceTransaction(ChatFragment.newInstance(friend.uid, friend.imageUri!!), "Friends", true)
+        (activity as HomeActivity).startReplaceTransaction(ChatFragment.newInstance(friend.uid, friend.name, friend.imageUri!!), "Friends", true)
     }
 
     companion object {
