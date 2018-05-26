@@ -9,10 +9,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.TextView
+import com.bumptech.glide.Glide
 import com.example.tszchiung.app.adapter.ChatAdapter
 import com.example.tszchiung.app.adapter.Message
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.fragment_chat.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -21,6 +24,7 @@ import kotlin.collections.HashMap
 class ChatFragment : Fragment() {
     private var myUid: String? = null
     private var partnerUid: String? = null
+    private var partnerName: String? = null
     private var partnerUri: String? = null
 
     private lateinit var adapter: ChatAdapter
@@ -37,6 +41,7 @@ class ChatFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             partnerUid = it.getString("partnerUid")
+            partnerName = it.getString("partnerName")
             partnerUri = it.getString("partnerUri")
         }
     }
@@ -102,6 +107,10 @@ class ChatFragment : Fragment() {
             }
         }
 
+        (activity as HomeActivity).findViewById<TextView>(R.id.title).text = partnerName
+        Glide.with(context!!).load(partnerUri).into((activity as HomeActivity).findViewById<CircleImageView>(R.id.profile_pic))
+        (activity as HomeActivity).findViewById<CircleImageView>(R.id.profile_pic).visibility = View.VISIBLE
+
         return view
     }
 
@@ -113,10 +122,11 @@ class ChatFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(partnerUid: String, partnerUri: Uri) =
+        fun newInstance(partnerUid: String, partnerName: String, partnerUri: Uri) =
                 ChatFragment().apply {
                     arguments = Bundle().apply {
                         putString("partnerUri", partnerUri.toString())
+                        putString("partnerName", partnerName)
                         putString("partnerUid", partnerUid)
                     }
                 }
